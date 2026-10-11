@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFF-ROAD PRO — Производство спецтехники</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #121214; color: #e4e4e7; letter-spacing: -0.01em; }
+        h1, h2, h3, .heading { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        
+        .btn-accent { background: #E5E5E5; color: #121214; transition: background 0.2s; border-radius: 4px; padding: 12px 24px; font-weight: 700; font-size: 14px; text-transform: uppercase; display: inline-block; text-align: center; letter-spacing: 1px; }
+        .btn-accent:hover { background: #FFFFFF; }
+        .btn-accent:disabled { background: #3a3a42; color: #8a8a91; cursor: not-allowed; }
+        .btn-outline { background: transparent; color: #fff; border: 1px solid #3a3a42; transition: all 0.2s; border-radius: 4px; padding: 11px 23px; font-weight: 600; font-size: 14px; text-transform: uppercase; display: inline-block; text-align: center; letter-spacing: 1px; }
+        .btn-outline:hover { border-color: #E5E5E5; color: #E5E5E5; }
+
+        .input-dark { background: #1C1C1F; border: 1px solid #2a2a2e; border-radius: 4px; padding: 12px 16px; color: #e4e4e7; font-size: 15px; transition: border 0.2s; width: 100%; resize: vertical; }
+        .input-dark:focus { outline: none; border-color: #8a8a91; background: #242427; }
+
+        .card-dark { background: #1C1C1F; border: 1px solid #2a2a2e; border-radius: 8px; transition: transform 0.3s ease, border-color 0.3s; overflow: hidden; cursor: pointer; }
+        .card-dark:hover { transform: translateY(-5px); border-color: #4a4a52; }
+
+        *:focus-visible { outline: 2px solid #8a8a91; outline-offset: 2px; border-radius: 2px; }
+        
+        @media (min-width: 769px) {
+            ::-webkit-scrollbar { width: 8px; height: 8px; }
+            ::-webkit-scrollbar-track { background: #121214; }
+            ::-webkit-scrollbar-thumb { background: #2a2a2e; border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: #3a3a42; }
+        }
+        @media (max-width: 768px) {
+            ::-webkit-scrollbar { display: none; }
+            * { -ms-overflow-style: none; scrollbar-width: none; }
+        }
+        
+        .play-btn { width: 60px; height: 60px; background: rgba(229, 229, 229, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); }
+        .play-btn::after { content: ''; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent #121214; margin-left: 4px; }
+        
+        .card-carousel { background-color: #1C1C1F; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .card-carousel::-webkit-scrollbar { display: none; }
+        .card-carousel img { scroll-snap-align: center; flex: 0 0 100%; object-fit: cover; height: 260px; }
+
+        .slide { transition: opacity 1.5s ease-in-out; opacity: 0; z-index: 1; pointer-events: none; }
+        .slide.is-active { opacity: 1; z-index: 2; pointer-events: auto; }
+        .slide .slide-text-1, .slide .slide-text-2, .slide .slide-text-3 { opacity: 0; transform: translateY(40px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide.is-active .slide-text-1 { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        .slide.is-active .slide-text-2 { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+        .slide.is-active .slide-text-3 { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
+
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(18, 18, 20, 0.8); backdrop-filter: blur(5px); width: 44px; height: 44px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; border: 1px solid #2a2a2e; transition: all 0.2s; }
+        .slider-arrow:hover { background: #E5E5E5; border-color: #E5E5E5; }
+        .slider-arrow:hover svg { stroke: #121214; }
+        .slider-dot { width: 30px; height: 4px; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.2s; }
+        .slider-dot.active { background: #E5E5E5; }
+    </style>
+</head>
+<body class="pt-16">
+
+    <header class="fixed top-0 left-0 w-full bg-[#0d0d0f]/90 backdrop-blur-md z-50 border-b border-[#2a2a2e]">
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-6">
+                <button onclick="toggleMenu()" class="text-[#e4e4e7]" aria-label="Открыть меню">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="text-xl font-bold tracking-widest text-[#e4e4e7] heading">OFF-ROAD <span class="text-white">PRO</span></div>
+            </div>
+            <div class="hidden md:block text-sm font-bold text-[#8a8a91] tracking-wide">+7 (999) 123-45-67</div>
+            <button class="relative bg-[#1C1C1F] text-white border border-[#3a3a42] px-4 py-2 rounded text-xs font-bold flex items-center gap-2 uppercase tracking-wide" onclick="navigateTo('cart')" aria-label="Открыть корзину">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span id="cart-count-header" class="bg-white text-[#121214] rounded-full px-1.5 text-[10px]">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="menu-overlay" class="fixed inset-0 bg-black/70 z-40 hidden" onclick="toggleMenu()"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-[#0d0d0f] text-[#e4e4e7] z-50 p-8 -translate-x-full transition-transform flex flex-col border-r border-[#2a2a2e]">
+        <button onclick="toggleMenu()" class="absolute top-6 right-6 text-[#8a8a91]" aria-label="Закрыть меню">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="text-sm font-bold text-white mb-8 tracking-widest uppercase border-b border-[#2a2a2e] pb-4">МЕНЮ</div>
+        <nav class="flex flex-col gap-5 text-2xl font-semibold mb-8 heading">
+            <a class="text-[#e4e4e7] hover:text-white cursor-pointer transition uppercase" onclick="navigateTo('home')">Главная</a>
+            <a class="text-[#e4e4e7] hover:text-white cursor-pointer transition uppercase" onclick="navigateTo('catalog')">Каталог</a>
+            <a class="text-[#e4e4e7] hover:text-white cursor-pointer transition uppercase" onclick="navigateTo('cart')">Корзина (<span id="cart-count">0</span>)</a>
+            <a class="text-[#e4e4e7] hover:text-white cursor-pointer transition uppercase" onclick="navigateTo('contacts')">Контакты</a>
+        </nav>
+    </aside>
+
+    <div id="home" class="view">
+        <div class="relative h-[60vh] min-h-[450px] w-full overflow-hidden bg-[#0d0d0f]" id="hero-slider-wrapper"></div>
+        
+        <section class="bg-[#121214] border-b border-[#2a2a2e] py-20">
+            <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+                <div class="flex flex-col items-center gap-3">
+                    <svg class="text-white" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                    <h3 class="text-base font-bold text-white heading">Заводское Качество</h3>
+                    <p class="text-xs text-[#8a8a91]">Полный цикл производства на собственной площадке.</p>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <svg class="text-white" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <h3 class="text-base font-bold text-white heading">Гарантия 2 Года</h3>
+                    <p class="text-xs text-[#8a8a91]">Сертификаты и постгарантийное обслуживание.</p>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <svg class="text-white" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <h3 class="text-base font-bold text-white heading">Доставка по РФ</h3>
+                    <p class="text-xs text-[#8a8a91]">Шеф-доставка или самовывоз с производства.</p>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <svg class="text-white" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    <h3 class="text-base font-bold text-white heading">Инжиниринг</h3>
+                    <p class="text-xs text-[#8a8a91]">Разработка техники под ваши задачи.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-[#1C1C1F] border-y border-[#2a2a2e] py-24">
+            <div class="max-w-5xl mx-auto px-6">
+                <h2 class="text-4xl md:text-5xl mb-12 text-white font-bold tracking-tight">Выполненные <span class="text-[#8a8a91]">Проекты</span></h2>
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"><p class="text-[#8a8a91]">Загрузка...</p></div>
+            </div>
+        </section>
+
+        <div class="max-w-5xl mx-auto px-6 py-24">
+            <div id="company-info-wrapper" class="grid grid-cols-1 md:grid-cols-3 gap-16 border-b border-[#2a2a2e] pb-16">
+                <div class="text-[#8a8a91] animate-pulse">Загрузка информации...</div>
+            </div>
+        </div>
+
+        <section class="max-w-5xl mx-auto px-6 py-24">
+            <h2 class="text-4xl md:text-5xl mb-12 text-white font-bold tracking-tight">Галерея <span class="text-[#8a8a91]">Видео</span></h2>
+            <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </section>
+
+        <section class="py-32 bg-[#121214] border-t border-[#2a2a2e]">
+            <div class="max-w-3xl mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl text-white font-bold mb-6 tracking-tight heading">Нужна консультация?</h2>
+                <p class="text-lg text-[#8a8a91] mb-10 font-normal">Оставьте заявку, и наши инженеры подберут оптимальную комплектацию вездехода под ваши задачи и условия эксплуатации.</p>
+                <button class="btn-accent text-lg px-10 py-4" onclick="navigateTo('contacts')">Оставить Заявку</button>
+            </div>
+        </section>
+
+        <footer class="bg-[#0d0d0f] text-[#5a5a61] py-12 border-t border-[#2a2a2e]">
+            <div class="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                <div><div class="text-xl font-bold tracking-widest text-white mb-4 heading">OFF-ROAD PRO</div><p>Производство сертифицированных вездеходов и спецтехники для суровых условий.</p></div>
+                <div><h4 class="text-white font-bold uppercase tracking-wide text-xs mb-4 heading">Навигация</h4><ul class="flex flex-col gap-2"><li><a onclick="navigateTo('home')" class="hover:text-white cursor-pointer transition">Главная</a></li><li><a onclick="navigateTo('catalog')" class="hover:text-white cursor-pointer transition">Каталог</a></li><li><a onclick="navigateTo('contacts')" class="hover:text-white cursor-pointer transition">Контакты</a></li></ul></div>
+                <div><h4 class="text-white font-bold uppercase tracking-wide text-xs mb-4 heading">Контакты</h4><p class="mb-1">г. Вологда, Промышленная зона</p><p class="mb-1">+7 (999) 123-45-67</p><p>sales@offroad-pro.ru</p></div>
+            </div>
+            <div class="max-w-5xl mx-auto px-6 mt-12 pt-8 border-t border-[#1C1C1F] text-center text-xs" id="footer-year">© 2024 OFF-ROAD PRO. Все права защищены.</div>
+        </footer>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 py-10 min-h-[50vh]">
+        <div id="catalog" class="view hidden">
+            <h2 class="text-4xl md:text-5xl mb-12 text-white font-bold tracking-tight heading">Каталог <span class="text-[#8a8a91]">Техники</span></h2>
+            <div class="flex gap-4 mb-12">
+                <button class="cat-btn active px-5 py-2 border border-transparent text-sm font-bold uppercase bg-[#E5E5E5] text-[#121214]" onclick="filterCategory('all', this)">Все</button>
+                <button class="cat-btn px-5 py-2 border border-[#3a3a42] text-sm font-bold uppercase text-[#e4e4e7] hover:border-white hover:text-white" onclick="filterCategory('Вездеходы', this)">Вездеходы</button>
+                <button class="cat-btn px-5 py-2 border border-[#3a3a42] text-sm font-bold uppercase text-[#e4e4e7] hover:border-white hover:text-white" onclick="filterCategory('Допы', this)">Доп. Оборудование</button>
+            </div>
+            <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
+        <div id="product-details" class="view hidden"></div>
+        <div id="cart" class="view hidden">
+            <h2 class="text-4xl md:text-5xl mb-12 text-white font-bold tracking-tight heading">Ваша <span class="text-[#8a8a91]">Корзина</span></h2>
+            <div id="cart-wrapper"></div>
+        </div>
+        <div id="contacts" class="view hidden">
+            <h2 class="text-4xl md:text-5xl mb-12 text-white font-bold tracking-tight heading">Контакты и <span class="text-[#8a8a91]">Доставка</span></h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="bg-[#1C1C1F] p-10 border border-[#2a2a2e] rounded-lg">
+                    <h3 class="text-xl mb-6 text-white font-bold uppercase tracking-wide heading">Прямые Контакты</h3>
+                    <p class="mb-4 text-base text-[#c0c0c5]"><b>Телефон:</b> +7 (999) 123-45-67</p>
+                    <p class="mb-4 text-base text-[#c0c0c5]"><b>Email:</b> sales@offroad-pro.ru</p>
+                    <p class="text-base text-[#c0c0c5]"><b>Адрес:</b> г. Вологда, Промышленная зона</p>
+                </div>
+                <div class="bg-[#1C1C1F] p-10 border border-[#2a2a2e] rounded-lg">
+                    <h3 class="text-xl mb-6 text-white font-bold uppercase tracking-wide heading">Оставить Заявку</h3>
+                    <input type="text" id="contact-name" placeholder="Ваше Имя" class="input-dark mb-4">
+                    <input type="tel" id="contact-phone" placeholder="Телефон" class="input-dark mb-4">
+                    <textarea id="contact-comment" placeholder="Дополнительные комментарии (необязательно)" rows="3" class="input-dark mb-6"></textarea>
+                    <button class="btn-accent w-full" onclick="submitUnifiedLead(this)">Отправить Заявку</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="video-modal" class="fixed inset-0 bg-black/90 z-[100] hidden flex justify-center items-center p-4" onclick="closeVideoModal()">
+        <div class="bg-black rounded-lg max-w-4xl w-full aspect-video relative overflow-hidden border border-[#2a2a2e]" onclick="event.stopPropagation()">
+            <button onclick="closeVideoModal()" class="absolute -top-4 -right-4 bg-white text-[#121214] w-9 h-9 rounded-sm font-bold z-10 flex items-center justify-center" aria-label="Закрыть видео">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://icpngypgwebzniapblpc.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_vM6JBpCVX3jKL2j9J0Unsg_OIZNsy5z';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let cart = [];
+        try { cart = JSON.parse(localStorage.getItem('offroad_cart') || '[]'); } catch(e) { cart = []; }
+        let allProducts = [], currentProduct = null, leaseSettings = null, appliedPromo = null;
+        let slideIndex = 0, slideTimer = null;
+        let currentGallery = [], currentImgIndex = 0;
+        let touchStartX = 0;
+        let slideTouchStartX = 0;
+        let homeLoaded = false; 
+
+        document.getElementById('footer-year').innerText = `© ${new Date().getFullYear()} OFF-ROAD PRO. Все права защищены.`;
+
+        function showToast(msg, isError = false) {
+            let toast = document.getElementById('toast-div');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:600;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#E5E5E5;color:#121214;text-align:center;';
+                document.body.appendChild(toast);
+            }
+            if (isError) { toast.style.background = '#8B3A3A'; toast.style.color = '#fff'; } 
+            else { toast.style.background = '#E5E5E5'; toast.style.color = '#121214'; }
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 1500);
+        }
+
+        function fmtImg(url, w=400, q=70) {
+            if (!url) return `https://via.placeholder.com/${w}x${Math.round(w*0.75)}/1C1C1F/3a3a42?text=Нет+фото`;
+            if (url.includes('supabase.co')) return `${url}?width=${w}&quality=${q}`;
+            return url;
+        }
+
+        function updateCartUI() {
+            const c1 = document.getElementById('cart-count'), c2 = document.getElementById('cart-count-header');
+            if(c1) c1.innerText = cart.length;
+                        try { localStorage.setItem('offroad_cart', JSON.stringify(cart)); } catch(e) {}
+        }
+        updateCartUI();
+
+        async function fetchWithCache(cacheKey, fetcher, ttl = 3600000) {
+            try {
+                const cached = localStorage.getItem(cacheKey);
+                if (cached) {
+                    const { timestamp, data } = JSON.parse(cached);
+                    if (Date.now() - timestamp < ttl) return data;
+                }
+            } catch(e) {}
+            try {
+                const freshData = await fetcher();
+                try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: freshData })); } catch(e) {}
+                return freshData;
+            } catch(e) { return null; }
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('menu-overlay').classList.toggle('hidden'); }
+        function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('menu-overlay').classList.add('hidden'); }
+        
+        function navigateTo(v) { 
+            document.querySelectorAll('.view').forEach(x => x.classList.add('hidden')); 
+            document.getElementById(v).classList.remove('hidden'); 
+            closeSidebar(); window.scrollTo(0,0); 
+            if(v==='catalog') loadProducts(); 
+            if(v==='cart') renderCart(); 
+            if(v==='home' && !homeLoaded) { 
+                loadSlides(); loadVideos(); loadCompanyInfo(); loadProjects(); 
+                homeLoaded = true;
+            } 
+        }
+
+      
+        function handleSlideLink(link) {
+            if (!link || link === 'catalog' || link.startsWith('http') === false) navigateTo(link || 'catalog');
+            else window.open(link, '_blank');
+        }
+
+        async function loadSlides() {
+            const data = await fetchWithCache('cache_slides', async () => {
+                const { data } = await sb.from('slides').select('*').order('created_at', { ascending: true });
+                return data;
+            });
+            const wrapper = document.getElementById('hero-slider-wrapper');
+            if (!data || data.length === 0) { wrapper.innerHTML = ''; return; }
+            
+            let dotsHtml = data.map((_, i) => `<span class="slider-dot ${i===0 ? 'active' : ''}" onclick="goToSlide(${i})"></span>`).join('');
+            
+            wrapper.innerHTML = data.map(s => `
+                <div class="slide absolute inset-0 bg-cover bg-center flex flex-col justify-center items-center text-center px-6" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('${fmtImg(s.image_url, 1600, 80)}');">
+                    ${s.title ? `<h1 class="slide-text-1 text-5xl md:text-7xl mb-4 font-bold tracking-wide text-white heading">${s.title}</h1>` : ''}
+                    ${s.subtitle ? `<p class="slide-text-2 text-xl md:text-2xl mb-8 max-w-xl text-[#c0c0c5] font-normal">${s.subtitle}</p>` : ''}
+                    ${s.button_text ? `<button class="slide-text-3 btn-accent text-base px-8 py-3" onclick="handleSlideLink('${s.button_link || 'catalog'}')">${s.button_text}</button>` : ''}
+                </div>
+            `).join('') + `
+                <div class="slider-arrow left-4" onclick="prevSlide()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e4e4e7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </div>
+                <div class="slider-arrow right-4" onclick="nextSlide()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e4e4e7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+                <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    ${dotsHtml}
+                </div>
+            `;
+      
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    const firstSlide = wrapper.querySelector('.slide');
+                    if (firstSlide) firstSlide.classList.add('is-active');
+                });
+            });
+
+            wrapper.addEventListener('touchstart', e => { slideTouchStartX = e.changedTouches[0].screenX; }, {passive: true});
+            wrapper.addEventListener('touchend', e => {
+                const touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX < slideTouchStartX - 50) nextSlide();
+                if (touchEndX > slideTouchStartX + 50) prevSlide();
+            }, {passive: true});
+
+            if (data.length > 1) resetSlideTimer();
+        }
+
+        function resetSlideTimer() {
+            if(slideTimer) clearInterval(slideTimer);
+            slideTimer = setInterval(() => nextSlide(true), 8000);
+        }
+
+        function updateSlideUI() {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            slides.forEach((s, i) => s.classList.toggle('is-active', i === slideIndex));
+            dots.forEach((d, i) => d.classList.toggle('active', i === slideIndex));
+        }
+
+        function nextSlide(isAuto = false) {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length <= 1) return;
+            slideIndex = (slideIndex + 1) % slides.length;
+                  updateSlideUI();
+            if (!isAuto) resetSlideTimer();
+        }
+
+        function prevSlide() {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length <= 1) return;
+            slideIndex = (slideIndex - 1 + slides.length) % slides.length;
+            updateSlideUI();
+            resetSlideTimer();
+        }
+
+        function goToSlide(index) {
+            slideIndex = index;
+            updateSlideUI();
+            resetSlideTimer();
+        }
+
+        async function loadCompanyInfo() {
+            const data = await fetchWithCache('cache_company', async () => {
+                const { data } = await sb.from('company_info').select('*').eq('id', 1).single();
+                return data;
+            });
+            const w = document.getElementById('company-info-wrapper');
+            if (!data) return;
+            leaseSettings = data;
+            w.innerHTML = `
+                <div><h3 class="text-lg font-bold text-white mb-3 heading">${data.block1_title}</h3><p class="text-base text-[#8a8a91] leading-relaxed font-light">${data.block1_text}</p></div>
+                <div><h3 class="text-lg font-bold text-white mb-3 heading">${data.block2_title}</h3><p class="text-base text-[#8a8a91] leading-relaxed font-light">${data.block2_text}</p></div>
+                <div><h3 class="text-lg font-bold text-white mb-3 heading">${data.block3_title}</h3><p class="text-base text-[#8a8a91] leading-relaxed font-light">${data.block3_text}</p></div>
+            `;
+        }
+
+        async function loadProjects() {
+                      const data = await fetchWithCache('cache_projects', async () => {
+                const { data } = await sb.from('projects').select('*').order('created_at', { ascending: false });
+                return data;
+            });
+            const grid = document.getElementById('projects-grid');
+            if(!data || data.length === 0) { grid.innerHTML = '<p class="text-[#8a8a91]">Проектов пока нет</p>'; return; }
+            grid.innerHTML = data.slice(0, 6).map(p => `
+                <div class="card-dark">
+                    <img src="${fmtImg(p.image_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
+                    <div class="p-6"><h3 class="text-lg mb-2 text-white font-bold heading">${p.title}</h3><p class="text-sm text-[#8a8a91] line-clamp-2 font-light">${p.description || ''}</p></div>
+                </div>
+            `).join('');
+        }
+
+        function getEmbedUrl(url) {
+            let match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            if (match) return `https://www.youtube.com/embed/${match[1]}`;
+            match = url.match(/rutube\.ru\/video\/([a-zA-Z0-9_-]+)/);
+            if (match) return `https://rutube.ru/play/embed/${match[1]}`;
+            match = url.match(/vk\.com\/video(-?\d+)_(\d+)/);
+            if (match) return `https://vk.com/video_ext.php?oid=${match[1]}&id=${match[2]}&hd=2`;
+            return url;
+        }
+
+        async function loadVideos() {
+            const data = await fetchWithCache('cache_videos', async () => {
+                const { data } = await sb.from('videos').select('*').order('created_at', { ascending: false });
+                return data;
+            });
+            const grid = document.getElementById('videos-grid');
+            if(!data || data.length === 0) { grid.innerHTML = '<p class="text-[#8a8a91]">Видео пока нет</p>'; return; }
+            grid.innerHTML = data.map(v => `
+                <div class="relative cursor-pointer rounded-lg overflow-hidden group border border-[#2a2a2e]" onclick="playVideo('${getEmbedUrl(v.url)}')">
+                          <img src="${fmtImg(v.img_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/60 transition"><div class="play-btn"></div></div>
+                </div>
+            `).join('');
+        }
+
+        function playVideo(url) { 
+            const sep = url.includes('?') ? '&' : '?';
+            document.getElementById('video-frame').src = url + sep + 'autoplay=1'; 
+            document.getElementById('video-modal').classList.remove('hidden'); 
+        }
+        function closeVideoModal() { document.getElementById('video-frame').src = ''; document.getElementById('video-modal').classList.add('hidden'); }
+
+        async function loadProducts() {
+            if(allProducts.length) { renderCatalog(allProducts); return; }
+            const data = await fetchWithCache('cache_products', async () => {
+                const { data } = await sb.from('products').select('*').order('created_at', {ascending:false});
+                return data;
+            });
+            allProducts = data || []; 
+            renderCatalog(allProducts);
+        }
+
+        function renderCatalog(arr) {
+            document.getElementById('catalog-grid').innerHTML = arr.map(p => {
+                const gallery = (p.gallery && p.gallery.length > 0) ? p.gallery : [fmtImg(null, 400, 80)];
+                const stockBadge = p.in_stock === false 
+                    ? `<span class="absolute top-4 left-4 bg-[#8B3A3A] text-white text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">Под заказ</span>` 
+                    : `<span class="absolute top-4 left-4 bg-[#E5E5E5] text-[#121214] text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">В наличии</span>`;
+                return `
+                <div class="card-dark relative" onclick="openDetails('${p.id}')">
+                    <div class="card-carousel">
+                        ${gallery.map(url => `<img src="${fmtImg(url, 600, 80)}" loading="lazy">`).join('')}
+                          </div>
+                    ${stockBadge}
+                    <div class="p-6"><h3 class="text-lg mb-2 text-white font-bold heading">${p.name}</h3><span class="text-xl font-bold text-white">${p.price.toLocaleString('ru')} ₽</span></div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function filterCategory(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('bg-[#E5E5E5]', 'text-[#121214]', 'border-transparent');
+                b.classList.add('border-[#3a3a42]', 'text-[#e4e4e7]', 'hover:border-white', 'hover:text-white');
+            });
+            btn.classList.add('bg-[#E5E5E5]', 'text-[#121214]', 'border-transparent');
+            btn.classList.remove('border-[#3a3a42]', 'text-[#e4e4e7]', 'hover:border-white', 'hover:text-white');
+            if (cat === 'all') renderCatalog(allProducts);
+            else renderCatalog(allProducts.filter(p => p.category === cat));
+        }
+
+        function changeImg(step) {
+            currentImgIndex = (currentImgIndex + step + currentGallery.length) % currentGallery.length;
+            document.getElementById('main-gallery-img').src = fmtImg(currentGallery[currentImgIndex], 1000, 90);
+        }
+
+        function setImg(index) {
+            currentImgIndex = index;
+            document.getElementById('main-gallery-img').src = fmtImg(currentGallery[currentImgIndex], 1000, 90);
+        }
+
+        function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
+        function handleTouchEnd(e) {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) changeImg(1); 
+            if (touchEndX > touchStartX + 50) changeImg(-1); 
+              }
+
+        function openDetails(id) {
+            currentProduct = allProducts.find(p => p.id === id);
+            if(!currentProduct) return;
+            
+            const engines = currentProduct.engines || [];
+            const options = currentProduct.options || [];
+            const specs = currentProduct.specs || [];
+            const gallery = (currentProduct.gallery && currentProduct.gallery.length > 0) ? currentProduct.gallery : [fmtImg(null, 1000, 90)];
+            
+            currentGallery = gallery;
+            currentImgIndex = 0;
+
+            const engHtml = engines.map(eng => `
+                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91]" data-price="${eng.price||0}">
+                    <div class="flex justify-between items-center"><b class="text-base font-medium text-[#e4e4e7]">${eng.name}</b><span class="text-sm text-white font-bold">${eng.price==0?'Включено':'+'+eng.price.toLocaleString('ru')+' ₽'}</span></div>
+                    ${eng.desc ? `<small class="text-sm text-[#8a8a91] block mt-1">${eng.desc}</small>` : ''}
+                </label>
+            `).join('');
+            const optHtml = options.map(opt => `
+                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91]" data-price="${opt.price||0}">
+                    <div class="flex justify-between items-center"><b class="text-base font-medium text-[#e4e4e7]">${opt.name}</b><span class="text-sm text-white font-bold">${opt.price==0?'Включено':'+'+opt.price.toLocaleString('ru')+' ₽'}</span></div>
+                    ${opt.desc ? `<small class="text-sm text-[#8a8a91] block mt-1">${opt.desc}</small>` : ''}
+                </label>
+            `).join('');
+            
+            const galHtml = `
+                <div class="relative mb-4 bg-[#1C1C1F] rounded-lg overflow-hidden" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
+                    <img id="main-gallery-img" src="${fmtImg(gallery[0], 1000, 90)}" class="w-full h-[500px] object-cover">
+                    ${gallery.length > 1 ? `
+                    <button onclick="changeImg(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded flex items-center justify-center hover:bg-white hover:text-black" aria-label="Предыдущее фото">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                                        <button onclick="changeImg(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded flex items-center justify-center hover:bg-white hover:text-black" aria-label="Следующее фото">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    ` : ''}
+                </div>
+                ${gallery.length > 1 ? `
+                <div class="flex gap-2 overflow-x-auto pb-2">
+                    ${gallery.map((url, i) => `<img src="${fmtImg(url, 200, 60)}" onclick="setImg(${i})" class="w-20 h-20 object-cover rounded cursor-pointer border-2 ${i===0 ? 'border-white' : 'border-transparent'}">`).join('')}
+                </div>
+                ` : ''}
+            `;
+
+            const specsHtml = specs.map(s => `
+                <div class="flex flex-col border-b border-[#2a2a2e] py-4">
+                    <span class="text-sm text-[#8a8a91] mb-1 uppercase tracking-wide">${s.label}</span>
+                    <b class="text-base text-[#e4e4e7] font-normal">${s.value}</b>
+                </div>
+            `).join('');
+
+            const stockHtml = currentProduct.in_stock === false 
+                ? `<span class="bg-[#8B3A3A] text-white text-xs font-bold px-3 py-1 rounded uppercase mr-2">Под заказ</span>` 
+                : `<span class="bg-[#E5E5E5] text-[#121214] text-xs font-bold px-3 py-1 rounded uppercase mr-2">В наличии</span>`;
+
+            const cartBtnHtml = currentProduct.in_stock === false ? `
+                <button class="btn-accent w-full mt-8 opacity-50 cursor-not-allowed" disabled>Нет в наличии</button>` : `
+                <button class="btn-accent w-full mt-8" onclick="addToCart()">Добавить в Корзину</button>`;
+
+            document.getElementById('product-details').innerHTML = `
+                <button class="text-white text-sm mb-8 flex items-center gap-1 hover:underline uppercase font-bold tracking-wide" onclick="navigateTo('catalog')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Назад к Каталогу
+                </button>
+                <div class="grid md:grid-cols-2 gap-12">
+                          <div>${galHtml}</div>
+                    <div>
+                        <h2 class="text-3xl md:text-4xl mb-4 text-white font-bold tracking-tight flex items-center heading">${stockHtml} ${currentProduct.name}</h2>
+                        <div class="text-3xl font-bold text-white mb-4" id="total-price">${currentProduct.price.toLocaleString('ru')} ₽</div>
+                        <div class="text-sm text-[#8a8a91] mb-8 bg-[#1C1C1F] border border-[#2a2a2e] p-4 rounded" id="lease-calc-box">Загрузка калькулятора...</div>
+                        <div class="bg-[#1C1C1F] border border-[#2a2a2e] p-6 rounded mb-8">${specsHtml || '<p class="text-sm text-[#8a8a91]">Характеристики не указаны</p>'}</div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-2 mt-8 heading">Выбор Двигателя (Опционально)</h3>
+                        <p class="text-sm text-[#8a8a91] mb-4">Базовый двигатель уже входит в стоимость. Вы можете выбрать апгрейд:</p>
+                        <div id="eng-group">${engHtml || '<p class="text-sm text-[#8a8a91]">Дополнительные двигатели не предусмотрены.</p>'}</div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-4 mt-8 heading">Доп. Опции</h3>
+                        <div id="opt-group">${optHtml || '<p class="text-sm text-[#8a8a91]">Дополнительные опции не предусмотрены</p>'}</div>
+                        ${cartBtnHtml}
+                    </div>
+                </div>
+            `;
+            navigateTo('product-details'); setupConfigurator();
+        }
+
+        function setupConfigurator() {
+            document.querySelectorAll('#eng-group label').forEach(item => {
+                item.onclick = () => { 
+                    if(item.classList.contains('border-[#8a8a91]')) {
+                        item.classList.remove('border-[#8a8a91]');
+                        item.classList.add('border-[#3a3a42]');
+                    } else {
+                        document.querySelectorAll('#eng-group label').forEach(i => { i.classList.remove('border-[#8a8a91]'); i.classList.add('border-[#3a3a42]'); });
+                        item.classList.add('border-[#8a8a91]'); 
+                        item.classList.remove('border-[#3a3a42]');
+                    }
+                    updateTotalPrice(); 
+                };
+                  });
+            document.querySelectorAll('#opt-group label').forEach(item => { 
+                item.onclick = () => { 
+                    if(item.classList.contains('border-[#8a8a91]')) { item.classList.remove('border-[#8a8a91]'); item.classList.add('border-[#3a3a42]'); }
+                    else { item.classList.add('border-[#8a8a91]'); item.classList.remove('border-[#3a3a42]'); }
+                    updateTotalPrice(); 
+                }; 
+            });
+        }
+
+        function updateTotalPrice() {
+            let total = currentProduct.price;
+            document.querySelectorAll('#eng-group label.border-[#8a8a91]').forEach(item => total += parseFloat(item.dataset.price) || 0);
+            document.querySelectorAll('#opt-group label.border-[#8a8a91]').forEach(item => total += parseFloat(item.dataset.price) || 0);
+            document.getElementById('total-price').innerText = total.toLocaleString('ru') + ' ₽';
+            updateLeaseCalc(total);
+        }
+
+        function updateLeaseCalc(price) {
+            if (!leaseSettings) return;
+            const initial = price * (leaseSettings.calc_initial / 100);
+            const totalLease = (price - initial) * (1 + leaseSettings.calc_rate / 100);
+            const monthly = Math.round(totalLease / leaseSettings.calc_term);
+            document.getElementById('lease-calc-box').innerHTML = `В лизинг от <b class="text-white">${monthly.toLocaleString('ru')} ₽/мес</b><br><span class="text-xs">Первый взнос ${leaseSettings.calc_initial}%, срок ${leaseSettings.calc_term} мес.</span>`;
+        }
+
+        function addToCart() {
+            let engName = 'Базовый (в комплекте)'; 
+            const engSel = document.querySelector('#eng-group label.border-[#8a8a91] b');
+            if (engSel) engName = 'Апгрейд: ' + engSel.innerText;
+            
+            let opts = []; 
+            document.querySelectorAll('#opt-group label.border-[#8a8a91] b').forEach(item => opts.push(item.innerText));
+                      let total = parseInt(document.getElementById('total-price').innerText.replace(/\D/g, '')) || 0;
+            cart.push({ name: currentProduct.name, price: total, details: `Двигатель: ${engName}. Допы: ${opts.join(', ') || 'Нет'}` });
+            updateCartUI();
+            showToast('Добавлено в корзину'); 
+            navigateTo('cart');
+        }
+
+        async function applyPromo() {
+            const input = document.getElementById('promo-input');
+            if (!input) return;
+            const code = input.value.trim();
+            if (!code) return;
+            try {
+                const { data, error } = await sb.from('promocodes').select('*').ilike('code', code).eq('is_active', true);
+                if (error) { showToast('Ошибка проверки', true); return; }
+                if (data && data.length > 0) {
+                    appliedPromo = data[0];
+                    if (!appliedPromo.discount_type) appliedPromo.discount_type = 'percent';
+                    showToast('Промокод применен');
+                    renderCart();
+                } else {
+                    appliedPromo = null;
+                    showToast('Промокод не найден', true);
+                    renderCart();
+                }
+            } catch(e) { showToast('Ошибка', true); }
+        }
+
+        function renderCart() {
+            const w = document.getElementById('cart-wrapper');
+            if(cart.length === 0) { w.innerHTML = '<p class="text-xl text-[#8a8a91]">Корзина пуста</p>'; return; }
+            let html = '<div class="flex flex-col gap-4">'; let total = 0;
+            cart.forEach((item, i) => {
+                total += item.price;
+                              html += `<div class="flex justify-between bg-[#1C1C1F] p-6 rounded border border-[#2a2a2e]"><div class="min-w-0"><b class="text-lg text-white block">${item.name}</b><small class="text-sm text-[#8a8a91] block mt-1">${item.details}</small></div><div class="text-right ml-4"><b class="text-lg text-white block">${item.price.toLocaleString('ru')} ₽</b><button class="text-sm text-[#8B3A3A] mt-2 hover:underline" onclick="removeFromCart(${i})">Удалить</button></div></div>`;
+            });
+            let discount = 0;
+            let discountText = "";
+            if (appliedPromo) {
+                const dtype = appliedPromo.discount_type || 'percent';
+                if (dtype === 'fixed') {
+                    discount = appliedPromo.discount_percent || 0;
+                    discountText = `Скидка: -${discount.toLocaleString('ru')} ₽`;
+                } else {
+                    discount = Math.round(total * ((appliedPromo.discount_percent || 0) / 100));
+                    discountText = `Скидка: -${discount.toLocaleString('ru')} ₽ (${appliedPromo.discount_percent}%)`;
+                }
+                total -= discount;
+            }
+            html += `</div>
+            <div class="mt-12 bg-[#1C1C1F] border border-[#2a2a2e] p-8 rounded">
+                <h3 class="text-xl mb-6 text-white font-bold uppercase tracking-wide heading">Данные для Заявки</h3>
+                <input type="text" id="cart-name" placeholder="Ваше Имя" class="input-dark mb-4">
+                <input type="tel" id="cart-phone" placeholder="Телефон" class="input-dark mb-4">
+                <textarea id="cart-comment" placeholder="Дополнительные комментарии к заказу (необязательно)" rows="3" class="input-dark mb-6"></textarea>
+            </div>
+            <div class="mt-6 bg-[#1C1C1F] border border-[#2a2a2e] p-4 rounded flex gap-2">
+                <input type="text" id="promo-input" placeholder="Введите промокод" value="${appliedPromo ? appliedPromo.code : ''}" class="input-dark">
+                <button class="btn-outline whitespace-nowrap px-6" onclick="applyPromo()">Применить</button>
+            </div>
+            ${discount > 0 ? `<p class="text-white text-sm mt-2">${discountText}</p>` : ''}
+            <div class="bg-[#1C1C1F] border border-[#2a2a2e] text-[#e4e4e7] p-8 rounded flex justify-between items-center mt-6">
+                <span class="text-lg text-[#8a8a91] uppercase tracking-wide heading">Итого:</span>
+                <b class="text-2xl font-bold text-white">${total.toLocaleString('ru')} ₽</b>
+            </div>
+            <button class="btn-accent w-full mt-8 py-4 text-lg" onclick="submitCartLead(this)">Оформить Заявку</button>`;
+            w.innerHTML = html;
+        }
+      
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); renderCart(); }
+
+        function submitCartLead(btn) {
+            const nameEl = document.getElementById('cart-name');
+            const phoneEl = document.getElementById('cart-phone');
+            const commentEl = document.getElementById('cart-comment');
+            if(!nameEl || !phoneEl) { showToast("Ошибка формы", true); return; }
+            const name = nameEl.value.trim();
+            const phone = phoneEl.value.trim();
+            if(!name || !phone) { showToast("Заполните имя и телефон", true); return; }
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
+            let details = "Корзина:\n" + cart.map((it, i) => `${i+1}. ${it.name} (${it.details}) - ${it.price}`).join('\n');
+            if (appliedPromo) details += `\nПромокод: ${appliedPromo.code}`;
+            if (commentEl && commentEl.value.trim()) details += `\nКомментарий клиента: ${commentEl.value.trim()}`;
+            sb.from('leads').insert([{ name, phone, details }]).then(({ error }) => {
+                if (error) { showToast("Ошибка отправки", true); btn.disabled = false; btn.innerText = "Оформить Заявку"; }
+                else { showToast("Заявка отправлена!"); cart = []; appliedPromo = null; updateCartUI(); navigateTo('home'); }
+            }).catch(e => { showToast("Ошибка сети", true); btn.disabled = false; btn.innerText = "Оформить Заявку"; });
+        }
+
+        function submitUnifiedLead(btn) {
+            const nameEl = document.getElementById('contact-name');
+            const phoneEl = document.getElementById('contact-phone');
+            const commentEl = document.getElementById('contact-comment');
+            if(!nameEl || !phoneEl) { showToast("Ошибка формы", true); return; }
+            const name = nameEl.value.trim();
+            const phone = phoneEl.value.trim();
+            if(!name || !phone) { showToast("Заполните поля", true); return; }
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
+            let details = "Заявка с контактов";
+            if (commentEl && commentEl.value.trim()) details += `\nКомментарий: ${commentEl.value.trim()}`;
+            sb.from('leads').insert([{ name, phone, details }]).then(({ error }) => {
+                              if (error) { showToast("Ошибка отправки", true); btn.disabled = false; btn.innerText = "Отправить"; }
+                else { showToast("Заявка отправлена!"); nameEl.value = ''; phoneEl.value = ''; if(commentEl) commentEl.value = ''; btn.disabled = false; btn.innerText = "Отправить"; }
+            }).catch(e => { showToast("Ошибка сети", true); btn.disabled = false; btn.innerText = "Отправить"; });
+        }
+
+        loadSlides(); loadVideos(); loadCompanyInfo(); loadProjects(); 
+        homeLoaded = true; 
+    </script>
+
+    <script>
+        function keepSupabaseAwake() {
+            if (typeof sb !== 'undefined' && sb) {
+                sb.from('products').select('id', { head: true, count: 'exact' })
+                  .then(() => { console.log('База активна'); })
+                  .catch(e => { console.log('Ошибка пинга базы', e); });
+            }
+        }
+        keepSupabaseAwake();
+        setInterval(keepSupabaseAwake, 180000);
+    </script>
+</body>
+</html>
