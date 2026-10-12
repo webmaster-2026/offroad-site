@@ -55,6 +55,9 @@
         .slider-arrow:hover svg { stroke: #121214; }
         .slider-dot { width: 30px; height: 4px; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.2s; }
         .slider-dot.active { background: #E5E5E5; }
+
+        /* Надежный класс для выбора опций, чтобы не ломался JS */
+        .selected-opt { border-color: #E5E5E5 !important; background-color: #242427 !important; }
     </style>
 </head>
 <body class="pt-16">
@@ -198,6 +201,7 @@
     </div>
 
     <script>
+        // ВНИМАНИЕ! ЗАМЕНИТЕ ЭТО НА СВОИ КЛЮЧИ ОТ SUPABASE!
         const SUPABASE_URL = 'https://icpngypgwebzniapblpc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcG5neXBnd2Viem5pYXBibHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MzQ0MDMsImV4cCI6MjEwNjExMDQwM30.jfyD1VbiviTQilQ1XTuFbpthcgkV_2zvNjip2Bed9fw';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -220,7 +224,7 @@
                 toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:600;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#E5E5E5;color:#121214;text-align:center;';
                 document.body.appendChild(toast);
             }
-            if (isError) { toast.style.background = '#8B3A3A'; toast.style.color = '#fff'; } 
+            if (isError) { toast.style.background = '#e74c3c'; toast.style.color = '#fff'; } 
             else { toast.style.background = '#E5E5E5'; toast.style.color = '#121214'; }
             toast.innerText = msg;
             toast.style.opacity = '1';
@@ -235,9 +239,10 @@
         }
 
         function updateCartUI() {
-            const c1 = document.getElementById('cart-count'), c2 = document.getElementById('cart-count-header');
+                const c1 = document.getElementById('cart-count'), c2 = document.getElementById('cart-count-header');
             if(c1) c1.innerText = cart.length;
-                        try { localStorage.setItem('offroad_cart', JSON.stringify(cart)); } catch(e) {}
+            if(c2) c2.innerText = cart.length;
+            try { localStorage.setItem('offroad_cart', JSON.stringify(cart)); } catch(e) {}
         }
         updateCartUI();
 
@@ -267,11 +272,10 @@
             if(v==='cart') renderCart(); 
             if(v==='home' && !homeLoaded) { 
                 loadSlides(); loadVideos(); loadCompanyInfo(); loadProjects(); 
-                homeLoaded = true;
+                        homeLoaded = true;
             } 
         }
 
-      
         function handleSlideLink(link) {
             if (!link || link === 'catalog' || link.startsWith('http') === false) navigateTo(link || 'catalog');
             else window.open(link, '_blank');
@@ -302,9 +306,9 @@
                 </div>
                 <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     ${dotsHtml}
-                </div>
+                                    </div>
             `;
-      
+
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     const firstSlide = wrapper.querySelector('.slide');
@@ -337,8 +341,8 @@
         function nextSlide(isAuto = false) {
             const slides = document.querySelectorAll('.slide');
             if (slides.length <= 1) return;
-            slideIndex = (slideIndex + 1) % slides.length;
-                  updateSlideUI();
+                    slideIndex = (slideIndex + 1) % slides.length;
+            updateSlideUI();
             if (!isAuto) resetSlideTimer();
         }
 
@@ -370,9 +374,9 @@
                 <div><h3 class="text-lg font-bold text-white mb-3 heading">${data.block3_title}</h3><p class="text-base text-[#8a8a91] leading-relaxed font-light">${data.block3_text}</p></div>
             `;
         }
-
+        
         async function loadProjects() {
-                      const data = await fetchWithCache('cache_projects', async () => {
+            const data = await fetchWithCache('cache_projects', async () => {
                 const { data } = await sb.from('projects').select('*').order('created_at', { ascending: false });
                 return data;
             });
@@ -405,8 +409,8 @@
             if(!data || data.length === 0) { grid.innerHTML = '<p class="text-[#8a8a91]">Видео пока нет</p>'; return; }
             grid.innerHTML = data.map(v => `
                 <div class="relative cursor-pointer rounded-lg overflow-hidden group border border-[#2a2a2e]" onclick="playVideo('${getEmbedUrl(v.url)}')">
-                          <img src="${fmtImg(v.img_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
-                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/60 transition"><div class="play-btn"></div></div>
+                    <img src="${fmtImg(v.img_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
+                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/60 transition"><div class="play-btn"></div></div>
                 </div>
             `).join('');
         }
@@ -432,17 +436,17 @@
             document.getElementById('catalog-grid').innerHTML = arr.map(p => {
                 const gallery = (p.gallery && p.gallery.length > 0) ? p.gallery : [fmtImg(null, 400, 80)];
                 const stockBadge = p.in_stock === false 
-                    ? `<span class="absolute top-4 left-4 bg-[#8B3A3A] text-white text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">Под заказ</span>` 
+                    ? `<span class="absolute top-4 left-4 bg-[#e74c3c] text-white text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">Под заказ</span>` 
                     : `<span class="absolute top-4 left-4 bg-[#E5E5E5] text-[#121214] text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">В наличии</span>`;
                 return `
                 <div class="card-dark relative" onclick="openDetails('${p.id}')">
                     <div class="card-carousel">
                         ${gallery.map(url => `<img src="${fmtImg(url, 600, 80)}" loading="lazy">`).join('')}
-                          </div>
+                    </div>
                     ${stockBadge}
                     <div class="p-6"><h3 class="text-lg mb-2 text-white font-bold heading">${p.name}</h3><span class="text-xl font-bold text-white">${p.price.toLocaleString('ru')} ₽</span></div>
                 </div>
-                `;
+                        `;
             }).join('');
         }
 
@@ -472,12 +476,12 @@
             const touchEndX = e.changedTouches[0].screenX;
             if (touchEndX < touchStartX - 50) changeImg(1); 
             if (touchEndX > touchStartX + 50) changeImg(-1); 
-              }
+        }
 
         function openDetails(id) {
             currentProduct = allProducts.find(p => p.id === id);
             if(!currentProduct) return;
-            
+                    
             const engines = currentProduct.engines || [];
             const options = currentProduct.options || [];
             const specs = currentProduct.specs || [];
@@ -487,13 +491,13 @@
             currentImgIndex = 0;
 
             const engHtml = engines.map(eng => `
-                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91]" data-price="${eng.price||0}">
+                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91] selected-opt" data-price="${eng.price||0}">
                     <div class="flex justify-between items-center"><b class="text-base font-medium text-[#e4e4e7]">${eng.name}</b><span class="text-sm text-white font-bold">${eng.price==0?'Включено':'+'+eng.price.toLocaleString('ru')+' ₽'}</span></div>
                     ${eng.desc ? `<small class="text-sm text-[#8a8a91] block mt-1">${eng.desc}</small>` : ''}
                 </label>
             `).join('');
             const optHtml = options.map(opt => `
-                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91]" data-price="${opt.price||0}">
+                <label class="block border border-[#3a3a42] rounded p-4 cursor-pointer mb-3 transition bg-[#1C1C1F] hover:border-[#8a8a91] selected-opt" data-price="${opt.price||0}">
                     <div class="flex justify-between items-center"><b class="text-base font-medium text-[#e4e4e7]">${opt.name}</b><span class="text-sm text-white font-bold">${opt.price==0?'Включено':'+'+opt.price.toLocaleString('ru')+' ₽'}</span></div>
                     ${opt.desc ? `<small class="text-sm text-[#8a8a91] block mt-1">${opt.desc}</small>` : ''}
                 </label>
@@ -506,14 +510,14 @@
                     <button onclick="changeImg(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded flex items-center justify-center hover:bg-white hover:text-black" aria-label="Предыдущее фото">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </button>
-                                        <button onclick="changeImg(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded flex items-center justify-center hover:bg-white hover:text-black" aria-label="Следующее фото">
+                    <button onclick="changeImg(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded flex items-center justify-center hover:bg-white hover:text-black" aria-label="Следующее фото">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                     ` : ''}
                 </div>
                 ${gallery.length > 1 ? `
                 <div class="flex gap-2 overflow-x-auto pb-2">
-                    ${gallery.map((url, i) => `<img src="${fmtImg(url, 200, 60)}" onclick="setImg(${i})" class="w-20 h-20 object-cover rounded cursor-pointer border-2 ${i===0 ? 'border-white' : 'border-transparent'}">`).join('')}
+                            ${gallery.map((url, i) => `<img src="${fmtImg(url, 200, 60)}" onclick="setImg(${i})" class="w-20 h-20 object-cover rounded cursor-pointer border-2 ${i===0 ? 'border-white' : 'border-transparent'}">`).join('')}
                 </div>
                 ` : ''}
             `;
@@ -526,7 +530,7 @@
             `).join('');
 
             const stockHtml = currentProduct.in_stock === false 
-                ? `<span class="bg-[#8B3A3A] text-white text-xs font-bold px-3 py-1 rounded uppercase mr-2">Под заказ</span>` 
+                ? `<span class="bg-[#e74c3c] text-white text-xs font-bold px-3 py-1 rounded uppercase mr-2">Под заказ</span>` 
                 : `<span class="bg-[#E5E5E5] text-[#121214] text-xs font-bold px-3 py-1 rounded uppercase mr-2">В наличии</span>`;
 
             const cartBtnHtml = currentProduct.in_stock === false ? `
@@ -539,7 +543,7 @@
                     Назад к Каталогу
                 </button>
                 <div class="grid md:grid-cols-2 gap-12">
-                          <div>${galHtml}</div>
+                    <div>${galHtml}</div>
                     <div>
                         <h2 class="text-3xl md:text-4xl mb-4 text-white font-bold tracking-tight flex items-center heading">${stockHtml} ${currentProduct.name}</h2>
                         <div class="text-3xl font-bold text-white mb-4" id="total-price">${currentProduct.price.toLocaleString('ru')} ₽</div>
@@ -549,7 +553,7 @@
                         <h3 class="text-xl font-bold text-white mb-2 mt-8 heading">Выбор Двигателя (Опционально)</h3>
                         <p class="text-sm text-[#8a8a91] mb-4">Базовый двигатель уже входит в стоимость. Вы можете выбрать апгрейд:</p>
                         <div id="eng-group">${engHtml || '<p class="text-sm text-[#8a8a91]">Дополнительные двигатели не предусмотрены.</p>'}</div>
-                        
+                                                
                         <h3 class="text-xl font-bold text-white mb-4 mt-8 heading">Доп. Опции</h3>
                         <div id="opt-group">${optHtml || '<p class="text-sm text-[#8a8a91]">Дополнительные опции не предусмотрены</p>'}</div>
                         ${cartBtnHtml}
@@ -562,30 +566,30 @@
         function setupConfigurator() {
             document.querySelectorAll('#eng-group label').forEach(item => {
                 item.onclick = () => { 
-                    if(item.classList.contains('border-[#8a8a91]')) {
-                        item.classList.remove('border-[#8a8a91]');
-                        item.classList.add('border-[#3a3a42]');
+                    if(item.classList.contains('selected-opt')) {
+                        item.classList.remove('selected-opt');
                     } else {
-                        document.querySelectorAll('#eng-group label').forEach(i => { i.classList.remove('border-[#8a8a91]'); i.classList.add('border-[#3a3a42]'); });
-                        item.classList.add('border-[#8a8a91]'); 
-                        item.classList.remove('border-[#3a3a42]');
+                        document.querySelectorAll('#eng-group label').forEach(i => { i.classList.remove('selected-opt'); });
+                        item.classList.add('selected-opt'); 
                     }
                     updateTotalPrice(); 
                 };
-                  });
+            });
             document.querySelectorAll('#opt-group label').forEach(item => { 
                 item.onclick = () => { 
-                    if(item.classList.contains('border-[#8a8a91]')) { item.classList.remove('border-[#8a8a91]'); item.classList.add('border-[#3a3a42]'); }
-                    else { item.classList.add('border-[#8a8a91]'); item.classList.remove('border-[#3a3a42]'); }
+                    if(item.classList.contains('selected-opt')) { item.classList.remove('selected-opt'); }
+                    else { item.classList.add('selected-opt'); }
                     updateTotalPrice(); 
                 }; 
             });
+            // Вызываем обновление цены изначально, чтобы учесть предвыбранный двигатель (если есть)
+            updateTotalPrice();
         }
 
         function updateTotalPrice() {
             let total = currentProduct.price;
-            document.querySelectorAll('#eng-group label.border-[#8a8a91]').forEach(item => total += parseFloat(item.dataset.price) || 0);
-            document.querySelectorAll('#opt-group label.border-[#8a8a91]').forEach(item => total += parseFloat(item.dataset.price) || 0);
+            document.querySelectorAll('#eng-group label.selected-opt').forEach(item => total += parseFloat(item.dataset.price) || 0);
+                        document.querySelectorAll('#opt-group label.selected-opt').forEach(item => total += parseFloat(item.dataset.price) || 0);
             document.getElementById('total-price').innerText = total.toLocaleString('ru') + ' ₽';
             updateLeaseCalc(total);
         }
@@ -600,12 +604,12 @@
 
         function addToCart() {
             let engName = 'Базовый (в комплекте)'; 
-            const engSel = document.querySelector('#eng-group label.border-[#8a8a91] b');
+            const engSel = document.querySelector('#eng-group label.selected-opt b');
             if (engSel) engName = 'Апгрейд: ' + engSel.innerText;
             
             let opts = []; 
-            document.querySelectorAll('#opt-group label.border-[#8a8a91] b').forEach(item => opts.push(item.innerText));
-                      let total = parseInt(document.getElementById('total-price').innerText.replace(/\D/g, '')) || 0;
+            document.querySelectorAll('#opt-group label.selected-opt b').forEach(item => opts.push(item.innerText));
+            let total = parseInt(document.getElementById('total-price').innerText.replace(/\D/g, '')) || 0;
             cart.push({ name: currentProduct.name, price: total, details: `Двигатель: ${engName}. Допы: ${opts.join(', ') || 'Нет'}` });
             updateCartUI();
             showToast('Добавлено в корзину'); 
@@ -622,7 +626,7 @@
                 if (error) { showToast('Ошибка проверки', true); return; }
                 if (data && data.length > 0) {
                     appliedPromo = data[0];
-                    if (!appliedPromo.discount_type) appliedPromo.discount_type = 'percent';
+                                        if (!appliedPromo.discount_type) appliedPromo.discount_type = 'percent';
                     showToast('Промокод применен');
                     renderCart();
                 } else {
@@ -639,7 +643,7 @@
             let html = '<div class="flex flex-col gap-4">'; let total = 0;
             cart.forEach((item, i) => {
                 total += item.price;
-                              html += `<div class="flex justify-between bg-[#1C1C1F] p-6 rounded border border-[#2a2a2e]"><div class="min-w-0"><b class="text-lg text-white block">${item.name}</b><small class="text-sm text-[#8a8a91] block mt-1">${item.details}</small></div><div class="text-right ml-4"><b class="text-lg text-white block">${item.price.toLocaleString('ru')} ₽</b><button class="text-sm text-[#8B3A3A] mt-2 hover:underline" onclick="removeFromCart(${i})">Удалить</button></div></div>`;
+                html += `<div class="flex justify-between bg-[#1C1C1F] p-6 rounded border border-[#2a2a2e]"><div class="min-w-0"><b class="text-lg text-white block">${item.name}</b><small class="text-sm text-[#8a8a91] block mt-1">${item.details}</small></div><div class="text-right ml-4"><b class="text-lg text-white block">${item.price.toLocaleString('ru')} ₽</b><button class="text-sm text-[#e74c3c] mt-2 hover:underline" onclick="removeFromCart(${i})">Удалить</button></div></div>`;
             });
             let discount = 0;
             let discountText = "";
@@ -659,13 +663,13 @@
                 <h3 class="text-xl mb-6 text-white font-bold uppercase tracking-wide heading">Данные для Заявки</h3>
                 <input type="text" id="cart-name" placeholder="Ваше Имя" class="input-dark mb-4">
                 <input type="tel" id="cart-phone" placeholder="Телефон" class="input-dark mb-4">
-                <textarea id="cart-comment" placeholder="Дополнительные комментарии к заказу (необязательно)" rows="3" class="input-dark mb-6"></textarea>
+                                <textarea id="cart-comment" placeholder="Дополнительные комментарии к заказу (необязательно)" rows="3" class="input-dark mb-6"></textarea>
             </div>
             <div class="mt-6 bg-[#1C1C1F] border border-[#2a2a2e] p-4 rounded flex gap-2">
                 <input type="text" id="promo-input" placeholder="Введите промокод" value="${appliedPromo ? appliedPromo.code : ''}" class="input-dark">
                 <button class="btn-outline whitespace-nowrap px-6" onclick="applyPromo()">Применить</button>
             </div>
-            ${discount > 0 ? `<p class="text-white text-sm mt-2">${discountText}</p>` : ''}
+                        ${discount > 0 ? `<p class="text-white text-sm mt-2">${discountText}</p>` : ''}
             <div class="bg-[#1C1C1F] border border-[#2a2a2e] text-[#e4e4e7] p-8 rounded flex justify-between items-center mt-6">
                 <span class="text-lg text-[#8a8a91] uppercase tracking-wide heading">Итого:</span>
                 <b class="text-2xl font-bold text-white">${total.toLocaleString('ru')} ₽</b>
@@ -673,7 +677,7 @@
             <button class="btn-accent w-full mt-8 py-4 text-lg" onclick="submitCartLead(this)">Оформить Заявку</button>`;
             w.innerHTML = html;
         }
-      
+
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); renderCart(); }
 
         function submitCartLead(btn) {
@@ -702,13 +706,13 @@
             if(!nameEl || !phoneEl) { showToast("Ошибка формы", true); return; }
             const name = nameEl.value.trim();
             const phone = phoneEl.value.trim();
-            if(!name || !phone) { showToast("Заполните поля", true); return; }
+                        if(!name || !phone) { showToast("Заполните поля", true); return; }
             btn.disabled = true;
             btn.innerText = "Отправка...";
             let details = "Заявка с контактов";
             if (commentEl && commentEl.value.trim()) details += `\nКомментарий: ${commentEl.value.trim()}`;
             sb.from('leads').insert([{ name, phone, details }]).then(({ error }) => {
-                              if (error) { showToast("Ошибка отправки", true); btn.disabled = false; btn.innerText = "Отправить"; }
+                if (error) { showToast("Ошибка отправки", true); btn.disabled = false; btn.innerText = "Отправить"; }
                 else { showToast("Заявка отправлена!"); nameEl.value = ''; phoneEl.value = ''; if(commentEl) commentEl.value = ''; btn.disabled = false; btn.innerText = "Отправить"; }
             }).catch(e => { showToast("Ошибка сети", true); btn.disabled = false; btn.innerText = "Отправить"; });
         }
