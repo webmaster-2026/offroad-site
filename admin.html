@@ -31,7 +31,7 @@
         .menu-link.active { background: #E5E5E5; color: #121214; font-weight: 600; }
         .menu-link svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         
-        .badge { position: absolute; top: 5px; right: -5px; background: #8B3A3A; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 9px; padding: 0 5px; border: 1px solid #121214; display: none; }
+        .badge { position: absolute; top: 5px; right: -5px; background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 9px; padding: 0 5px; border: 1px solid #121214; display: none; }
 
         input[type="file"] { display: block; width: 100%; text-sm; color: #8a8a91; background: #1C1C1F; border-radius: 4px; padding: 10px; border: 1px solid #2a2a2e; }
         input[type="file"]::file-selector-button { margin-right: 15px; padding: 8px 16px; border-radius: 4px; border: 0; font-weight: 600; font-size: 12px; background: #2a2a2e; color: #fff; cursor: pointer; transition: background 0.2s; }
@@ -55,7 +55,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
             </div>
-            <div id="login-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
+            <div id="login-error" class="text-red-500 text-sm mb-4 text-center hidden"></div>
             <button type="button" id="btn-sign-in" class="btn-accent w-full p-3 font-medium rounded text-sm" onclick="signIn()">Войти</button>
         </div>
     </div>
@@ -65,7 +65,7 @@
             <h2 class="text-white font-semibold tracking-tight text-base hidden md:block heading">Панель Администратора</h2>
             <div class="flex gap-3 w-full md:w-auto">
                 <a href="index.html" target="_blank" class="flex-1 text-center bg-[#242427] text-white border border-[#3a3a42] px-5 py-2.5 rounded font-medium text-xs hover:bg-[#2a2a2e] whitespace-nowrap">Открыть Сайт ↗</a>
-                <button type="button" class="flex-1 text-center bg-[#8B3A3A] text-white px-5 py-2.5 rounded font-medium text-xs hover:bg-[#a04545] whitespace-nowrap" onclick="sb.auth.signOut().then(()=>location.reload())">Выйти</button>
+                <button type="button" class="flex-1 text-center bg-[#e74c3c] text-white px-5 py-2.5 rounded font-medium text-xs hover:bg-[#c0392b] whitespace-nowrap" onclick="sb.auth.signOut().then(()=>location.reload())">Выйти</button>
             </div>
         </header>
 
@@ -219,7 +219,7 @@
                         <button type="button" class="btn-accent w-full p-3 font-medium rounded text-sm flex justify-center items-center" onclick="addPromo()">Добавить Промокод</button>
                     </div>
                     <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                                          <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Активные Промокоды</h3>
+                                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Активные Промокоды</h3>
                         <div id="promo-list"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
@@ -252,8 +252,8 @@
                                 <input type="number" id="ci-calc-rate" placeholder="Напр: 15" class="w-full p-3 rounded mt-1">
                                 <small class="text-[#8a8a91] text-xs">Общий процент переплаты за весь срок.</small>
                             </div>
-                                                        <div>
-                                <label class="text-xs text-white font-medium">Срок (мес.)</label>
+                            <div>
+                                                                <label class="text-xs text-white font-medium">Срок (мес.)</label>
                                 <input type="number" id="ci-calc-term" placeholder="Напр: 36" class="w-full p-3 rounded mt-1">
                                 <small class="text-[#8a8a91] text-xs">На сколько месяцев берется лизинг.</small>
                             </div>
@@ -271,14 +271,15 @@
             <p class="text-sm text-[#8a8a91] mb-8">Вы уверены, что хотите удалить этот элемент безвозвратно?</p>
             <div class="flex gap-3">
                 <button id="cancel-delete" class="flex-1 bg-[#242427] hover:bg-[#2a2a2e] text-white font-medium py-3 rounded text-sm transition">Отмена</button>
-                <button id="confirm-delete" class="flex-1 bg-[#8B3A3A] hover:bg-[#a04545] text-white font-medium py-3 rounded text-sm transition">Удалить</button>
+                <button id="confirm-delete" class="flex-1 bg-[#e74c3c] hover:bg-[#c0392b] text-white font-medium py-3 rounded text-sm transition">Удалить</button>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://icpngypgwebzniapblpc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcG5neXBnd2Viem5pYXBibHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MzQ0MDMsImV4cCI6MjEwNjExMDQwM30.jfyD1VbiviTQilQ1XTuFbpthcgkV_2zvNjip2Bed9fw';
+        // ВНИМАНИЕ! ЗАМЕНИТЕ ЭТО НА СВОИ КЛЮЧИ ОТ SUPABASE!
+        const SUPABASE_URL = 'https://ВАШ_КОД.supabase.co';
+        const SUPABASE_ANON_KEY = 'ВАШ_КЛЮЧ';
         
         let sb = null;
         let currentLeadsCount = 0;
@@ -286,8 +287,8 @@
 
         const safeStorage = {
             get: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
-                      set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} },
-            del: (k) => { try { localStorage.removeItem(k); } catch(e) {} }
+            set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} },
+                        del: (k) => { try { localStorage.removeItem(k); } catch(e) {} }
         };
         
         try {
@@ -307,7 +308,7 @@
                 toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:500;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#E5E5E5;color:#121214;text-align:center;';
                 document.body.appendChild(toast);
             }
-            if (isError) { toast.style.background = '#8B3A3A'; toast.style.color = '#fff'; } 
+            if (isError) { toast.style.background = '#e74c3c'; toast.style.color = '#fff'; } 
             else { toast.style.background = '#E5E5E5'; toast.style.color = '#121214'; }
             toast.innerText = msg;
             toast.style.opacity = '1';
@@ -319,9 +320,9 @@
             const inp = document.getElementById('pass');
             const btn = document.getElementById('pass-toggle-btn');
             if (inp.type === 'password') {
-                      inp.type = 'text';
+                inp.type = 'text';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-            } else {
+                            } else {
                 inp.type = 'password';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
             }
@@ -351,12 +352,12 @@
                 }
             });
         }
-      
+
         async function signIn() {
             const btn = document.getElementById('btn-sign-in');
             const errDiv = document.getElementById('login-error');
             errDiv.innerText = ''; errDiv.classList.add('hidden');
-
+            
             if (!sb) { showError("БД не загрузилась!"); return; }
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value.trim();
@@ -385,13 +386,13 @@
                     btn.disabled = false; 
                     btn.innerText = "Войти";
                 }
-                          } catch (e) {
+            } catch (e) {
                 showError(e.message || "Критическая ошибка сети.");
                 btn.disabled = false; 
                 btn.innerText = "Войти";
             }
         }
-
+        
         function compressImage(file) {
             return new Promise((resolve, reject) => {
                 if (file.size > 20 * 1024 * 1024) return reject(new Error("Файл слишком большой (макс 20МБ)"));
@@ -419,14 +420,14 @@
 
         function showTab(tabName) {
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden'));
-                      document.getElementById('tab-' + tabName).classList.remove('hidden');
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
             document.querySelectorAll('.menu-link').forEach(b => b.classList.remove('active'));
             document.getElementById('menu-' + tabName).classList.add('active');
             if (tabName === 'products') resetForm();
             
             if (tabName === 'leads') {
                 document.getElementById('leads-badge').style.display = 'none';
-                safeStorage.set('leadsViewedCount', currentLeadsCount);
+                                safeStorage.set('leadsViewedCount', currentLeadsCount);
             }
         }
 
@@ -453,7 +454,7 @@
             const c = document.getElementById(containerId);
             const div = document.createElement('div'); div.className = 'flex gap-2 mb-2';
             fields.forEach(f => {
-                              const inp = document.createElement('input'); inp.type = f === 'price' ? 'number' : 'text';
+                const inp = document.createElement('input'); inp.type = f === 'price' ? 'number' : 'text';
                 const placeholders = {
                     'label': 'Название', 'value': 'Значение', 'name': 'Название', 'price': 'Цена', 'desc': 'Описание'
                 };
@@ -462,7 +463,7 @@
                 inp.className = 'flex-1 p-2 border rounded text-xs';
                 div.appendChild(inp);
             });
-            const btn = document.createElement('button'); btn.innerText = '✕'; btn.className = 'bg-[#242427] text-white px-3 rounded text-xs hover:bg-[#2a2a2e]'; btn.setAttribute('aria-label', 'Удалить строку'); btn.onclick = () => div.remove();
+                    const btn = document.createElement('button'); btn.innerText = '✕'; btn.className = 'bg-[#242427] text-white px-3 rounded text-xs hover:bg-[#2a2a2e]'; btn.setAttribute('aria-label', 'Удалить строку'); btn.onclick = () => div.remove();
             div.appendChild(btn); c.appendChild(div);
         }
 
@@ -486,18 +487,18 @@
         }
 
         function resetForm() {
-                      document.getElementById('p-id').value = '';
+            document.getElementById('p-id').value = '';
             document.querySelectorAll('#p-name, #p-price, #p-desc').forEach(el => el.value = '');
             document.getElementById('p-desc').style.height = 'auto'; 
-
-                  document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
+            
+            document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.cat-toggle-btn[data-cat="Вездеходы"]').classList.add('active');
             document.getElementById('p-category').value = 'Вездеходы';
             
             document.querySelectorAll('.stock-toggle-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.stock-toggle-btn[data-stock="true"]').classList.add('active');
             document.getElementById('p-stock').value = 'true';
-
+            
             document.getElementById('specs-container').innerHTML = '';
             document.getElementById('eng-container').innerHTML = '';
             document.getElementById('opt-container').innerHTML = '';
@@ -512,7 +513,7 @@
         }
 
         const btnEditStyle = `background-color: #242427; color: #fff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid #3a3a42; font-size: 13px; white-space: nowrap;`;
-        const btnDeleteStyle = `background-color: #8B3A3A; color: #ffffff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
+        const btnDeleteStyle = `background-color: #e74c3c; color: #ffffff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
         const btnDetailsStyle = `background-color: #E5E5E5; color: #121214; padding: 8px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
 
         async function loadData() {
@@ -524,23 +525,23 @@
                     sb.from('leads').select('*').order('created_at', { ascending: false }),
                     sb.from('company_info').select('*').eq('id', 1).single(),
                     sb.from('promocodes').select('*').order('created_at', { ascending: false }),
-                          sb.from('projects').select('*').order('created_at', { ascending: false })
+                    sb.from('projects').select('*').order('created_at', { ascending: false })
                 ]);
 
                 const prods = prodsRes.data;
                 document.getElementById('prod-list').innerHTML = prods && prods.length ? prods.map(p => `
-                    <div class="flex justify-between items-center border-b border-[#2a2a2e] py-3 gap-2">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0" loading="lazy">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#2a2a2e] py-3 gap-3">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
                             <div class="min-w-0">
-                                <b class="text-white text-sm block truncate">${p.name}</b>
+                                        <b class="text-white text-sm block truncate">${p.name}</b>
                                 <span class="text-[#8a8a91] text-xs whitespace-nowrap">
                                     ${p.category || 'Вездеходы'} | <span class="text-white font-medium">${p.price} ₽</span> | 
-                                    <span class="${p.in_stock ? 'text-[#E5E5E5]' : 'text-[#8B3A3A]'} font-medium">${p.in_stock ? 'В наличии' : 'Под заказ'}</span>
+                                    <span class="${p.in_stock ? 'text-[#E5E5E5]' : 'text-[#e74c3c]'} font-medium">${p.in_stock ? 'В наличии' : 'Под заказ'}</span>
                                 </span>
                             </div>
                         </div>
-                        <div class="flex gap-2 shrink-0">
+                        <div class="flex gap-2 shrink-0 justify-end">
                             <button type="button" style="${btnEditStyle}" onclick="editProduct('${p.id}')">Изменить</button>
                             <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('product', '${p.id}', this)">Удалить</button>
                         </div>
@@ -557,7 +558,7 @@
                                 <span class="text-[#8a8a91] text-xs block truncate">Кнопка: ${s.button_text || 'Нет'} -> ${s.button_link || 'catalog'}</span>
                             </div>
                             <div>
-                                                            <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('slide', '${s.id}', this)">Удалить</button>
+                                <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('slide', '${s.id}', this)">Удалить</button>
                             </div>
                         </div>
                     </div>
@@ -569,7 +570,7 @@
                         <img src="${v.img_url ? v.img_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
                             <b class="text-white text-sm block truncate">${v.title || 'Видео'}</b>
-                            <div>
+                                    <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('video', '${v.id}', this)">Удалить</button>
                             </div>
                         </div>
@@ -589,7 +590,7 @@
                             </div>
                             <div class="flex gap-2 shrink-0">
                                 <button type="button" style="${btnDetailsStyle}" onclick="toggleLeadDetails('${l.id}', this)">Подробнее</button>
-                                                                <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('lead', '${l.id}', this)">Удалить</button>
+                                <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('lead', '${l.id}', this)">Удалить</button>
                             </div>
                         </div>
                         <div id="lead-details-${l.id}" class="hidden mt-3 bg-[#242427] p-3 rounded text-xs text-white whitespace-pre-line">${l.details || 'Нет деталей'}</div>
@@ -605,7 +606,7 @@
                     document.getElementById('ci-b1-text').value = ci.block1_text || '';
                     document.getElementById('ci-b2-title').value = ci.block2_title || '';
                     document.getElementById('ci-b2-text').value = ci.block2_text || '';
-                    document.getElementById('ci-b3-title').value = ci.block3_title || '';
+                                        document.getElementById('ci-b3-title').value = ci.block3_title || '';
                     document.getElementById('ci-b3-text').value = ci.block3_text || '';
                     document.getElementById('ci-calc-initial').value = ci.calc_initial || 20;
                     document.getElementById('ci-calc-rate').value = ci.calc_rate || 15;
@@ -624,7 +625,7 @@
                 document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
                     <div class="bg-[#242427] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${p.image_url ? p.image_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
-                              <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
+                        <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
                             <div class="min-w-0">
                                 <b class="text-white text-sm block truncate">${p.title}</b>
                                 <span class="text-[#8a8a91] text-xs line-clamp-2 block">${p.description || ''}</span>
@@ -641,7 +642,7 @@
         }
 
         function toggleLeadDetails(id, btn) {
-            const el = document.getElementById('lead-details-' + id);
+                    const el = document.getElementById('lead-details-' + id);
             if(el) {
                 el.classList.toggle('hidden');
                 btn.innerText = el.classList.contains('hidden') ? 'Подробнее' : 'Свернуть';
@@ -659,7 +660,7 @@
                 if(catBtn) catBtn.classList.add('active');
                 document.getElementById('p-category').value = data.category || 'Вездеходы';
 
-                      document.querySelectorAll('.stock-toggle-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.stock-toggle-btn').forEach(b => b.classList.remove('active'));
                 const stockVal = data.in_stock ? 'true' : 'false';
                 const stockBtn = document.querySelector(`.stock-toggle-btn[data-stock="${stockVal}"]`);
                 if(stockBtn) stockBtn.classList.add('active');
@@ -677,7 +678,7 @@
                 window.scrollTo(0, 0);
             });
         }
-
+        
         function confirmDelete(type, id, btn) {
             pendingDelete = { type, id, btn };
             document.getElementById('confirm-modal').classList.remove('hidden');
@@ -694,7 +695,7 @@
 
         document.getElementById('cancel-delete').onclick = () => {
             document.getElementById('confirm-modal').classList.add('hidden');
-                  pendingDelete = { type: null, id: null, btn: null };
+            pendingDelete = { type: null, id: null, btn: null };
         };
 
         async function executeDelete(type, id, btn) {
@@ -714,7 +715,7 @@
                     const { data: sl } = await sb.from('slides').select('image_url').eq('id', id).single();
                     if (sl && sl.image_url) { 
                         try { await sb.storage.from('product-photos').remove([sl.image_url.split('/').pop()]); } catch(e) { console.error("Storage error", e); }
-                    }
+                            }
                     const res = await sb.from('slides').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'video') {
@@ -728,8 +729,8 @@
                     const { data: pr } = await sb.from('projects').select('image_url').eq('id', id).single();
                     if (pr && pr.image_url) { 
                         try { await sb.storage.from('product-photos').remove([pr.image_url.split('/').pop()]); } catch(e) { console.error("Storage error", e); }
-      }
-                          const res = await sb.from('projects').delete().eq('id', id);
+                    }
+                    const res = await sb.from('projects').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'lead') {
                     const res = await sb.from('leads').delete().eq('id', id);
@@ -751,7 +752,7 @@
         }
 
         async function saveProduct(btn) {
-            btn.disabled = true; 
+                        btn.disabled = true; 
             btn.innerText = 'Сохранение...';
             
             try {
@@ -764,7 +765,7 @@
                 const specs = getData('specs-container', ['label','value']);
                 const engines = getData('eng-container', ['name','price','desc']);
                 const options = getData('opt-container', ['name','price','desc']);
-                              const files = document.getElementById('p-img').files;
+                const files = document.getElementById('p-img').files;
                 
                 if(!name || !price) { 
                     showToast("Заполните название и цену!"); 
@@ -788,7 +789,7 @@
                         } catch(err) {
                             console.error("File error", err);
                             showToast(`Ошибка с фото ${i+1}: ` + err.message, true);
-                        }
+                                                    }
                     }
                 }
                 
@@ -800,7 +801,7 @@
                     if (error) throw error;
                     showToast("Обновлено!"); 
                 } else { 
-                                  const { error } = await sb.from('products').insert([payload]);
+                    const { error } = await sb.from('products').insert([payload]);
                     if (error) throw error;
                     showToast("Добавлено!"); 
                 }
@@ -824,7 +825,7 @@
                 const file = document.getElementById('v-img').files[0];
                 if(!url) { showToast("Вставьте ссылку!"); return; }
                 let imgUrl = '';
-                if (file) {
+                                if (file) {
                     const comp = await compressImage(file);
                     const fName = `vid_${Date.now()}.webp`;
                     await sb.storage.from('product-photos').upload(fName, comp);
@@ -835,7 +836,7 @@
                 safeStorage.del('cache_videos');
                 showToast("Видео добавлено!");
                 document.getElementById('v-title').value = ''; document.getElementById('v-url').value = ''; document.getElementById('v-img').value = '';
-                              loadData();
+                loadData();
             } catch (e) { showToast("Ошибка: " + e.message, true); }
             finally { btn.disabled = false; btn.innerText = 'Загрузить Видео'; }
         }
@@ -860,7 +861,7 @@
                 document.getElementById('s-title').value = ''; document.getElementById('s-subtitle').value = ''; document.getElementById('s-btn').value = '';
                 loadData();
             } catch (e) { showToast("Ошибка: " + e.message, true); }
-            finally { btn.disabled = false; btn.innerText = 'Загрузить Слайд'; }
+                    finally { btn.disabled = false; btn.innerText = 'Загрузить Слайд'; }
         }
 
         async function saveProject(btn) {
@@ -871,7 +872,7 @@
                 const file = document.getElementById('pr-img').files[0];
                 if(!file || !title) { showToast("Заполните название и фото!"); return; }
                 const comp = await compressImage(file);
-                              const fName = `pr_${Date.now()}.webp`;
+                const fName = `pr_${Date.now()}.webp`;
                 await sb.storage.from('product-photos').upload(fName, comp);
                 const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
                 const { error } = await sb.from('projects').insert([{ title, description: desc, image_url: imgUrl }]);
@@ -897,7 +898,7 @@
                     block2_text: document.getElementById('ci-b2-text').value,
                     block3_title: document.getElementById('ci-b3-title').value,
                     block3_text: document.getElementById('ci-b3-text').value,
-                    calc_initial: parseInt(document.getElementById('ci-calc-initial').value) || 20,
+                                        calc_initial: parseInt(document.getElementById('ci-calc-initial').value) || 20,
                     calc_rate: parseInt(document.getElementById('ci-calc-rate').value) || 15,
                     calc_term: parseInt(document.getElementById('ci-calc-term').value) || 36,
                 };
@@ -906,7 +907,7 @@
                 safeStorage.del('cache_company');
                 showToast("Настройки сохранены!");
             } catch (e) { 
-                          console.error("Save settings error", e);
+                console.error("Save settings error", e);
                 showToast("Ошибка: " + e.message, true); 
             } finally { 
                 btn.disabled = false; 
@@ -934,7 +935,7 @@
             pollTimer = setInterval(checkNewLeads, 30000); 
         }
 
-        async function checkNewLeads() {
+                async function checkNewLeads() {
             if (!sb) return;
             try {
                 const { count, error } = await sb.from('leads').select('*', { count: 'exact', head: true });
@@ -942,7 +943,7 @@
                 currentLeadsCount = count || 0;
                 updateLeadsBadge(currentLeadsCount);
             } catch(e) { console.error("Polling error", e); }
-              }
+        }
 
         function updateLeadsBadge(totalCount) {
             const badge = document.getElementById('leads-badge');
@@ -970,6 +971,6 @@
         }
         keepSupabaseAwake();
         setInterval(keepSupabaseAwake, 180000);
-    </script>
+            </script>
 </body>
 </html>
