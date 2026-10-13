@@ -8,46 +8,58 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #121214; color: #e4e4e7; letter-spacing: -0.01em; }
-        .heading { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+        body { font-family: 'Inter', sans-serif; background: #121410; color: #e4e6d9; letter-spacing: -0.01em; }
+        .heading { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; font-style: italic; }
         
-        .btn-accent { background: #E5E5E5; color: #121214; transition: background 0.2s; border-radius: 4px; padding: 12px 24px; font-weight: 600; font-size: 14px; text-transform: uppercase; } 
-        .btn-accent:hover { background: #FFFFFF; }
-        .btn-accent:disabled { background: #3a3a42; color: #8a8a91; cursor: not-allowed; }
+        /* ЖЕСТКАЯ ЗАЩИТА ОТ ВЫДЕЛЕНИЯ ТЕКСТА НА КНОПКАХ */
+        button, a, label {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+        }
+        input, textarea { -webkit-user-select: text; user-select: text; }
         
-        input, textarea, select { background: #1C1C1F; border: 1px solid #2a2a2e; color: #e4e4e7; font-size: 14px; border-radius: 4px; transition: border 0.2s; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: #8a8a91; background: #242427; }
+        .btn-accent { background: #5F7A2A; color: #F5F7E8; transition: background 0.2s; border-radius: 4px; padding: 12px 24px; font-weight: 600; font-size: 14px; text-transform: uppercase; } 
+        .btn-accent:hover { background: #72923A; }
+        .btn-accent:disabled { background: #2A2E22; color: #5a5e47; cursor: not-allowed; }
         
-        select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; cursor: pointer; }
-        select option { background: #1C1C1F; color: #e4e4e7; }
+        input, textarea, select { background: #1A1D14; border: 1px solid #2A2E22; color: #e4e6d9; font-size: 14px; border-radius: 4px; transition: border 0.2s; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #8F9A5D; background: #20231A; }
+        
+        select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8E75' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; cursor: pointer; }
+        select option { background: #1A1D14; color: #e4e6d9; }
 
-        *:focus-visible { outline: 2px solid #8a8a91; outline-offset: 2px; border-radius: 2px; }
+        *:focus-visible { outline: 2px solid #8F9A5D; outline-offset: 2px; border-radius: 2px; }
 
-        .icon-btn svg { stroke: #8a8a91; transition: stroke 0.2s; }
-        .icon-btn:hover svg { stroke: #E5E5E5; }
+        .icon-btn svg { stroke: #8A8E75; transition: stroke 0.2s; }
+        .icon-btn:hover svg { stroke: #5F7A2A; }
         
-        .menu-link { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 4px; cursor: pointer; color: #c0c0c5; font-weight: 500; transition: background 0.2s, color 0.2s; position: relative; }
-        .menu-link:hover { background: #1C1C1F; color: #fff; }
-        .menu-link.active { background: #E5E5E5; color: #121214; font-weight: 600; }
+        .menu-link { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 4px; cursor: pointer; color: #C0C4B0; font-weight: 500; transition: background 0.2s, color 0.2s; position: relative; }
+        .menu-link:hover { background: #1A1D14; color: #F5F7E8; }
+        .menu-link.active { background: #5F7A2A; color: #F5F7E8; font-weight: 600; }
         .menu-link svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         
-        .badge { position: absolute; top: 5px; right: -5px; background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 9px; padding: 0 5px; border: 1px solid #121214; display: none; }
+        .badge { position: absolute; top: 5px; right: -5px; background: #B5432E; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 9px; padding: 0 5px; border: 1px solid #121410; display: none; }
 
-        input[type="file"] { display: block; width: 100%; text-sm; color: #8a8a91; background: #1C1C1F; border-radius: 4px; padding: 10px; border: 1px solid #2a2a2e; }
-        input[type="file"]::file-selector-button { margin-right: 15px; padding: 8px 16px; border-radius: 4px; border: 0; font-weight: 600; font-size: 12px; background: #2a2a2e; color: #fff; cursor: pointer; transition: background 0.2s; }
-        input[type="file"]::file-selector-button:hover { background: #3a3a42; }
+        input[type="file"] { display: block; width: 100%; text-sm; color: #8A8E75; background: #1A1D14; border-radius: 4px; padding: 10px; border: 1px solid #2A2E22; }
+        input[type="file"]::file-selector-button { margin-right: 15px; padding: 8px 16px; border-radius: 4px; border: 0; font-weight: 600; font-size: 12px; background: #2A2E22; color: #F5F7E8; cursor: pointer; transition: background 0.2s; }
+        input[type="file"]::file-selector-button:hover { background: #3A3F2E; }
 
-        .toggle-btn { padding: 10px; border: 1px solid #2a2a2e; background: #1C1C1F; color: #c0c0c5; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; transition: background 0.2s; text-align: center; }
-        .toggle-btn:hover { background: #242427; }
-        .toggle-btn.active { background: #E5E5E5; color: #121214; border-color: #E5E5E5; font-weight: 600; }
-        .admin-thumb { background-color: #1C1C1F; border-radius: 4px; }
+        .toggle-btn { padding: 10px; border: 1px solid #2A2E22; background: #1A1D14; color: #C0C4B0; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; transition: background 0.2s; text-align: center; }
+        .toggle-btn:hover { background: #20231A; }
+        .toggle-btn.active { background: #5F7A2A; color: #F5F7E8; border-color: #5F7A2A; font-weight: 600; }
+        .admin-thumb { background-color: #1A1D14; border-radius: 4px; }
     </style>
 </head>
 <body class="p-6">
 
     <div id="auth" class="flex justify-center items-center h-screen">
-        <div class="bg-[#1C1C1F] p-10 w-full max-w-md border border-[#2a2a2e] shadow-xl rounded-lg">
-            <h2 class="text-2xl mb-8 text-white font-semibold tracking-tight heading">Вход в Систему</h2>
+        <div class="bg-[#1A1D14] p-10 w-full max-w-md border border-[#2A2E22] shadow-xl rounded-lg">
+            <h2 class="text-2xl mb-8 text-[#F5F7E8] font-semibold tracking-tight heading">Вход в Систему</h2>
             <input type="email" id="email" placeholder="Электронная почта" class="w-full p-3 mb-4 border rounded">
             <div class="relative mb-6">
                 <input type="password" id="pass" placeholder="Пароль" class="w-full p-3 border rounded pr-10">
@@ -55,22 +67,22 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
             </div>
-            <div id="login-error" class="text-red-500 text-sm mb-4 text-center hidden"></div>
+            <div id="login-error" class="text-[#B5432E] text-sm mb-4 text-center hidden"></div>
             <button type="button" id="btn-sign-in" class="btn-accent w-full p-3 font-medium rounded text-sm" onclick="signIn()">Войти</button>
         </div>
     </div>
 
     <div id="panel" class="hidden max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-[#1C1C1F] p-5 rounded-lg shadow-sm border border-[#2a2a2e]">
-            <h2 class="text-white font-semibold tracking-tight text-base hidden md:block heading">Панель Администратора</h2>
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-[#1A1D14] p-5 rounded-lg shadow-sm border border-[#2A2E22]">
+            <h2 class="text-[#F5F7E8] font-semibold tracking-tight text-base hidden md:block heading">Панель Администратора</h2>
             <div class="flex gap-3 w-full md:w-auto">
-                <a href="index.html" target="_blank" class="flex-1 text-center bg-[#242427] text-white border border-[#3a3a42] px-5 py-2.5 rounded font-medium text-xs hover:bg-[#2a2a2e] whitespace-nowrap">Открыть Сайт ↗</a>
-                <button type="button" class="flex-1 text-center bg-[#e74c3c] text-white px-5 py-2.5 rounded font-medium text-xs hover:bg-[#c0392b] whitespace-nowrap" onclick="sb.auth.signOut().then(()=>location.reload())">Выйти</button>
+                <a href="index.html" target="_blank" class="flex-1 text-center bg-[#20231A] text-[#F5F7E8] border border-[#3A3F2E] px-5 py-2.5 rounded font-medium text-xs hover:bg-[#2A2E22] whitespace-nowrap">Открыть Сайт ↗</a>
+                <button type="button" class="flex-1 text-center bg-[#B5432E] text-[#F5F7E8] px-5 py-2.5 rounded font-medium text-xs hover:bg-[#9A3625] whitespace-nowrap" onclick="sb.auth.signOut().then(()=>location.reload())">Выйти</button>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <aside class="lg:col-span-1 bg-[#1C1C1F] p-6 rounded-lg border border-[#2a2a2e] h-fit">
+            <aside class="lg:col-span-1 bg-[#1A1D14] p-6 rounded-lg border border-[#2A2E22] h-fit">
                 <nav class="flex flex-col gap-2">
                     <div class="menu-link active" id="menu-products" onclick="showTab('products')">
                         <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
@@ -106,19 +118,19 @@
 
             <main class="lg:col-span-3">
                 <div id="tab-products" class="admin-tab">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading" id="form-title">Добавить Товар</h3>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading" id="form-title">Добавить Товар</h3>
                         <input type="hidden" id="p-id">
                         <input type="text" id="p-name" placeholder="Название" class="w-full p-3 mb-4 rounded">
                         
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Категория</label>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Категория</label>
                         <div class="grid grid-cols-2 gap-2 mb-4">
                             <button type="button" data-cat="Вездеходы" class="toggle-btn active cat-toggle-btn">Вездеходы</button>
                             <button type="button" data-cat="Допы" class="toggle-btn cat-toggle-btn">Доп. Оборудование</button>
                         </div>
                         <input type="hidden" id="p-category" value="Вездеходы">
 
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Наличие</label>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Наличие</label>
                         <div class="grid grid-cols-2 gap-2 mb-4">
                             <button type="button" data-stock="true" class="toggle-btn active stock-toggle-btn">В наличии</button>
                             <button type="button" data-stock="false" class="toggle-btn stock-toggle-btn">Под заказ</button>
@@ -128,134 +140,134 @@
                         <input type="number" id="p-price" placeholder="Цена" class="w-full p-3 mb-4 rounded">
                         <textarea id="p-desc" rows="6" placeholder="Описание" class="w-full p-3 mb-4 rounded min-h-[150px]" oninput="autoResize(this)"></textarea>
                         
-                        <label class="text-xs text-[#8a8a91] font-medium">Характеристики</label><div id="specs-container" class="mb-2"></div>
-                        <button type="button" class="w-full border border-dashed border-[#3a3a42] text-[#8a8a91] p-2 rounded mb-4 text-xs hover:border-[#8a8a91] hover:text-white" onclick="addRow('specs-container', ['label','value'])">+ Характеристика</button>
-                        <label class="text-xs text-[#8a8a91] font-medium">Двигатели</label><div id="eng-container" class="mb-2"></div>
-                        <button type="button" class="w-full border border-dashed border-[#3a3a42] text-[#8a8a91] p-2 rounded mb-4 text-xs hover:border-[#8a8a91] hover:text-white" onclick="addRow('eng-container', ['name','price','desc'])">+ Двигатель</button>
-                        <label class="text-xs text-[#8a8a91] font-medium">Доп. Опции</label><div id="opt-container" class="mb-2"></div>
-                        <button type="button" class="w-full border border-dashed border-[#3a3a42] text-[#8a8a91] p-2 rounded mb-4 text-xs hover:border-[#8a8a91] hover:text-white" onclick="addRow('opt-container', ['name','price','desc'])">+ Опция</button>
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Фотографии Товара</label>
+                        <label class="text-xs text-[#8A8E75] font-medium">Характеристики</label><div id="specs-container" class="mb-2"></div>
+                        <button type="button" class="w-full border border-dashed border-[#3A3F2E] text-[#8A8E75] p-2 rounded mb-4 text-xs hover:border-[#8F9A5D] hover:text-[#F5F7E8]" onclick="addRow('specs-container', ['label','value'])">+ Характеристика</button>
+                        <label class="text-xs text-[#8A8E75] font-medium">Двигатели</label><div id="eng-container" class="mb-2"></div>
+                        <button type="button" class="w-full border border-dashed border-[#3A3F2E] text-[#8A8E75] p-2 rounded mb-4 text-xs hover:border-[#8F9A5D] hover:text-[#F5F7E8]" onclick="addRow('eng-container', ['name','price','desc'])">+ Двигатель</button>
+                        <label class="text-xs text-[#8A8E75] font-medium">Доп. Опции</label><div id="opt-container" class="mb-2"></div>
+                        <button type="button" class="w-full border border-dashed border-[#3A3F2E] text-[#8A8E75] p-2 rounded mb-4 text-xs hover:border-[#8F9A5D] hover:text-[#F5F7E8]" onclick="addRow('opt-container', ['name','price','desc'])">+ Опция</button>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фотографии Товара</label>
                         <input type="file" id="p-img" multiple>
-                        <div id="img-status" class="text-xs text-white mt-2 font-medium"></div>
+                        <div id="img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium"></div>
                         <button type="button" id="btn-save-prod" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveProduct(this)">Сохранить</button>
-                        <button type="button" class="bg-[#242427] w-full p-3 font-medium rounded mt-2 text-sm hover:bg-[#2a2a2e] text-white" onclick="resetForm()">Очистить</button>
+                        <button type="button" class="bg-[#20231A] w-full p-3 font-medium rounded mt-2 text-sm hover:bg-[#2A2E22] text-[#F5F7E8]" onclick="resetForm()">Очистить</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">База Товаров</h3>
-                        <div id="prod-list"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">База Товаров</h3>
+                        <div id="prod-list"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-slides" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Добавить Слайд</h3>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Слайд</h3>
                         <input type="text" id="s-title" placeholder="Заголовок" class="w-full p-3 mb-4 rounded">
                         <input type="text" id="s-subtitle" placeholder="Подзаголовок" class="w-full p-3 mb-4 rounded">
                         <input type="text" id="s-btn" placeholder="Текст кнопки (оставьте пустым, если без кнопки)" class="w-full p-3 mb-4 rounded">
-                        <label class="text-xs text-[#8a8a91] font-medium">Куда ведет кнопка</label>
+                        <label class="text-xs text-[#8A8E75] font-medium">Куда ведет кнопка</label>
                         <select id="s-link" class="w-full p-3 mb-4 rounded">
                             <option value="catalog">В Каталог</option>
                             <option value="home">На Главную</option>
                             <option value="contacts">В Контакты</option>
                         </select>
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Фоновое Фото Слайда</label>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фоновое Фото Слайда</label>
                         <input type="file" id="s-img" accept="image/*">
                         <button type="button" id="btn-save-slide" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveSlide(this)">Загрузить Слайд</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Слайды на Главной</h3>
-                        <div id="slide-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Слайды на Главной</h3>
+                        <div id="slide-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-projects" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Добавить Проект</h3>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Проект</h3>
                         <input type="text" id="pr-title" placeholder="Название Проекта" class="w-full p-3 mb-4 rounded">
                         <textarea id="pr-desc" rows="3" placeholder="Краткое описание" class="w-full p-3 mb-4 rounded min-h-[100px]" oninput="autoResize(this)"></textarea>
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Фото Проекта</label>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фото Проекта</label>
                         <input type="file" id="pr-img" accept="image/*">
                         <button type="button" id="btn-save-pr" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveProject(this)">Загрузить Проект</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Выполненные Проекты</h3>
-                        <div id="pr-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Выполненные Проекты</h3>
+                        <div id="pr-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-videos" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Добавить Видео</h3>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Видео</h3>
                         <input type="text" id="v-title" placeholder="Название" class="w-full p-3 mb-4 rounded">
                         <input type="text" id="v-url" placeholder="Ссылка на YouTube/RuTube" class="w-full p-3 mb-4 rounded">
-                        <label class="text-xs text-[#8a8a91] font-medium block mb-2">Превью Фото (необязательно)</label>
+                        <label class="text-xs text-[#8A8E75] font-medium block mb-2">Превью Фото (необязательно)</label>
                         <input type="file" id="v-img" accept="image/*">
                         <button type="button" id="btn-save-vid" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveVideo(this)">Загрузить Видео</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Видео Галерея</h3>
-                        <div id="vid-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Видео Галерея</h3>
+                        <div id="vid-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-leads" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Заявки</h3>
-                        <div id="leads-list"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Заявки</h3>
+                        <div id="leads-list"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-promos" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Добавить Промокод</h3>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Промокод</h3>
                         <div class="flex flex-col md:flex-row gap-2 mb-4">
                             <input type="text" id="promo-code" placeholder="Код (например: ЛЕТО)" class="flex-1 p-3 rounded">
                             <select id="promo-type" class="p-3 rounded">
                                 <option value="percent">Скидка в %</option>
-                                <option value="fixed">Фикс. сумма (₽)</option>
+                                                    <option value="fixed">Фикс. сумма (₽)</option>
                             </select>
                             <input type="number" id="promo-discount" placeholder="Значение" class="md:w-32 p-3 rounded">
                         </div>
-                        <button type="button" class="btn-accent w-full p-3 font-medium rounded text-sm flex justify-center items-center" onclick="addPromo()">Добавить Промокод</button>
+                        <button type="button" class="btn-accent w-full p-3 font-medium rounded text-sm flex justify-center items-center" onclick="addPromo(this)">Добавить Промокод</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Активные Промокоды</h3>
-                        <div id="promo-list"><p class="text-[#8a8a91] text-sm">Загрузка...</p></div>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Активные Промокоды</h3>
+                        <div id="promo-list"><p class="text-[#8A8E75] text-sm">Загрузка...</p></div>
                     </div>
                 </div>
 
                 <div id="tab-settings" class="admin-tab hidden">
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg mb-6">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Информация о Компании</h3>
-                        <label class="text-xs text-[#8a8a91] font-medium">Блок 1</label>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Информация о Компании</h3>
+                        <label class="text-xs text-[#8A8E75] font-medium">Блок 1</label>
                         <input type="text" id="ci-b1-title" placeholder="Заголовок 1" class="w-full p-3 mb-2 rounded">
                         <textarea id="ci-b1-text" rows="3" placeholder="Текст 1" class="w-full p-3 mb-4 rounded min-h-[80px]" oninput="autoResize(this)"></textarea>
-                        <label class="text-xs text-[#8a8a91] font-medium">Блок 2</label>
+                        <label class="text-xs text-[#8A8E75] font-medium">Блок 2</label>
                         <input type="text" id="ci-b2-title" placeholder="Заголовок 2" class="w-full p-3 mb-2 rounded">
                         <textarea id="ci-b2-text" rows="3" placeholder="Текст 2" class="w-full p-3 mb-4 rounded min-h-[80px]" oninput="autoResize(this)"></textarea>
-                        <label class="text-xs text-[#8a8a91] font-medium">Блок 3</label>
+                        <label class="text-xs text-[#8A8E75] font-medium">Блок 3</label>
                         <input type="text" id="ci-b3-title" placeholder="Заголовок 3" class="w-full p-3 mb-2 rounded">
                         <textarea id="ci-b3-text" rows="3" placeholder="Текст 3" class="w-full p-3 mb-4 rounded min-h-[80px]" oninput="autoResize(this)"></textarea>
                         <button type="button" id="btn-save-company" class="btn-accent w-full p-3 font-medium rounded text-sm mt-4 flex justify-center items-center" onclick="saveCompanyInfo(this)">Сохранить Тексты</button>
                     </div>
-                    <div class="bg-[#1C1C1F] p-8 border border-[#2a2a2e] rounded-lg">
-                        <h3 class="text-white mb-6 font-semibold tracking-tight text-lg heading">Настройки Калькулятора Лизинга</h3>
-                        <p class="text-xs text-[#8a8a91] mb-4">Формула: (Цена - Первый взнос) * Удорожание / Срок. Заполняйте только цифрами.</p>
+                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
+                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Настройки Калькулятора Лизинга</h3>
+                        <p class="text-xs text-[#8A8E75] mb-4">Формула: (Цена - Первый взнос) * Удорожание / Срок. Заполняйте только цифрами.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="text-xs text-white font-medium">Первый взнос (%)</label>
+                                <label class="text-xs text-[#F5F7E8] font-medium">Первый взнос (%)</label>
                                 <input type="number" id="ci-calc-initial" placeholder="Напр: 20" class="w-full p-3 rounded mt-1">
-                                <small class="text-[#8a8a91] text-xs">Процент от цены, который клиент платит сразу.</small>
-                            </div>
+                                <small class="text-[#8A8E75] text-xs">Процент от цены, который клиент платит сразу.</small>
+                                                            </div>
                             <div>
-                                <label class="text-xs text-white font-medium">Удорожание (%)</label>
+                                <label class="text-xs text-[#F5F7E8] font-medium">Удорожание (%)</label>
                                 <input type="number" id="ci-calc-rate" placeholder="Напр: 15" class="w-full p-3 rounded mt-1">
-                                <small class="text-[#8a8a91] text-xs">Общий процент переплаты за весь срок.</small>
+                                <small class="text-[#8A8E75] text-xs">Общий процент переплаты за весь срок.</small>
                             </div>
                             <div>
-                                                                <label class="text-xs text-white font-medium">Срок (мес.)</label>
+                                <label class="text-xs text-[#F5F7E8] font-medium">Срок (мес.)</label>
                                 <input type="number" id="ci-calc-term" placeholder="Напр: 36" class="w-full p-3 rounded mt-1">
-                                <small class="text-[#8a8a91] text-xs">На сколько месяцев берется лизинг.</small>
+                                <small class="text-[#8A8E75] text-xs">На сколько месяцев берется лизинг.</small>
                             </div>
                         </div>
                         <button type="button" id="btn-save-ci" class="btn-accent w-full p-3 font-medium rounded text-sm flex justify-center items-center" onclick="saveCompanyInfo(this)">Сохранить Настройки</button>
@@ -266,18 +278,18 @@
     </div>
 
     <div id="confirm-modal" class="fixed inset-0 bg-black/70 z-[200] hidden flex justify-center items-center p-4 backdrop-blur-sm">
-        <div class="bg-[#1C1C1F] border border-[#2a2a2e] p-10 rounded-lg max-w-sm w-full text-center shadow-2xl">
-            <h3 class="text-xl font-bold text-white mb-3 heading">Подтвердите удаление</h3>
-            <p class="text-sm text-[#8a8a91] mb-8">Вы уверены, что хотите удалить этот элемент безвозвратно?</p>
+        <div class="bg-[#1A1D14] border border-[#2A2E22] p-10 rounded-lg max-w-sm w-full text-center shadow-2xl">
+            <h3 class="text-xl font-bold text-[#F5F7E8] mb-3 heading">Подтвердите удаление</h3>
+            <p class="text-sm text-[#8A8E75] mb-8">Вы уверены, что хотите удалить этот элемент безвозвратно?</p>
             <div class="flex gap-3">
-                <button id="cancel-delete" class="flex-1 bg-[#242427] hover:bg-[#2a2a2e] text-white font-medium py-3 rounded text-sm transition">Отмена</button>
-                <button id="confirm-delete" class="flex-1 bg-[#e74c3c] hover:bg-[#c0392b] text-white font-medium py-3 rounded text-sm transition">Удалить</button>
+                <button id="cancel-delete" class="flex-1 bg-[#20231A] hover:bg-[#2A2E22] text-[#F5F7E8] font-medium py-3 rounded text-sm transition">Отмена</button>
+                <button id="confirm-delete" class="flex-1 bg-[#B5432E] hover:bg-[#9A3625] text-[#F5F7E8] font-medium py-3 rounded text-sm transition">Удалить</button>
             </div>
         </div>
     </div>
 
+    
     <script>
-        // ВНИМАНИЕ! ЗАМЕНИТЕ ЭТО НА СВОИ КЛЮЧИ ОТ SUPABASE!
         const SUPABASE_URL = 'https://icpngypgwebzniapblpc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcG5neXBnd2Viem5pYXBibHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MzQ0MDMsImV4cCI6MjEwNjExMDQwM30.jfyD1VbiviTQilQ1XTuFbpthcgkV_2zvNjip2Bed9fw';
         
@@ -288,30 +300,29 @@
         const safeStorage = {
             get: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
             set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} },
-                        del: (k) => { try { localStorage.removeItem(k); } catch(e) {} }
+            del: (k) => { try { localStorage.removeItem(k); } catch(e) {} }
         };
         
         try {
             if (typeof supabase !== 'undefined') sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            else showError("Библиотека не загрузилась.");
+            else showError("Библиотека Supabase не загрузилась. Проверьте блокировщики рекламы.");
         } catch (e) { showError("Критическая ошибка инициализации: " + e.message); }
 
         function showError(msg) {
             const errDiv = document.getElementById('login-error');
-            errDiv.innerText = msg; errDiv.classList.remove('hidden');
+            if(errDiv) { errDiv.innerText = msg; errDiv.classList.remove('hidden'); }
         }
 
         function showToast(msg, isError = false) {
             let toast = document.getElementById('toast-div');
             if (!toast) {
                 toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:500;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#E5E5E5;color:#121214;text-align:center;';
+                toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:500;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#5F7A2A;color:#F5F7E8;text-align:center;';
                 document.body.appendChild(toast);
             }
-            if (isError) { toast.style.background = '#e74c3c'; toast.style.color = '#fff'; } 
-            else { toast.style.background = '#E5E5E5'; toast.style.color = '#121214'; }
-            toast.innerText = msg;
-            toast.style.opacity = '1';
+            if (isError) { toast.style.background = '#B5432E'; toast.style.color = '#fff'; } 
+            else { toast.style.background = '#5F7A2A'; toast.style.color = '#F5F7E8'; }
+                        toast.style.opacity = '1';
             clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
         }
@@ -322,7 +333,7 @@
             if (inp.type === 'password') {
                 inp.type = 'text';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-                            } else {
+            } else {
                 inp.type = 'password';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
             }
@@ -345,7 +356,7 @@
                 if (session) {
                     document.getElementById('auth').classList.add('hidden');
                     document.getElementById('panel').classList.remove('hidden');
-                    if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
+                            if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
                 } else {
                     document.getElementById('auth').classList.remove('hidden');
                     document.getElementById('panel').classList.add('hidden');
@@ -357,7 +368,7 @@
             const btn = document.getElementById('btn-sign-in');
             const errDiv = document.getElementById('login-error');
             errDiv.innerText = ''; errDiv.classList.add('hidden');
-            
+
             if (!sb) { showError("БД не загрузилась!"); return; }
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value.trim();
@@ -377,7 +388,7 @@
                     btn.disabled = false; 
                     btn.innerText = "Войти";
                 } else if (data.user) {
-                    btn.innerText = "Успех! Загрузка...";
+                                        btn.innerText = "Успех! Загрузка...";
                     document.getElementById('auth').classList.add('hidden');
                     document.getElementById('panel').classList.remove('hidden');
                     if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
@@ -392,7 +403,7 @@
                 btn.innerText = "Войти";
             }
         }
-        
+
         function compressImage(file) {
             return new Promise((resolve, reject) => {
                 if (file.size > 20 * 1024 * 1024) return reject(new Error("Файл слишком большой (макс 20МБ)"));
@@ -407,7 +418,7 @@
                         c.getContext('2d').drawImage(img, 0, 0, w, h);
                         c.toBlob(b => {
                             if(b) resolve(b);
-                            else resolve(file); 
+                                                        else resolve(file); 
                         }, 'image/webp', 0.7); 
                     }; 
                     img.onerror = () => reject(new Error("Не удалось прочитать изображение"));
@@ -427,7 +438,7 @@
             
             if (tabName === 'leads') {
                 document.getElementById('leads-badge').style.display = 'none';
-                                safeStorage.set('leadsViewedCount', currentLeadsCount);
+                safeStorage.set('leadsViewedCount', currentLeadsCount);
             }
         }
 
@@ -437,7 +448,7 @@
                     document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     document.getElementById('p-category').value = btn.dataset.cat;
-                };
+                                    };
             });
 
             document.querySelectorAll('.stock-toggle-btn').forEach(btn => {
@@ -463,11 +474,11 @@
                 inp.className = 'flex-1 p-2 border rounded text-xs';
                 div.appendChild(inp);
             });
-                    const btn = document.createElement('button'); btn.innerText = '✕'; btn.className = 'bg-[#242427] text-white px-3 rounded text-xs hover:bg-[#2a2a2e]'; btn.setAttribute('aria-label', 'Удалить строку'); btn.onclick = () => div.remove();
+            const btn = document.createElement('button'); btn.innerText = '✕'; btn.className = 'bg-[#20231A] text-[#F5F7E8] px-3 rounded text-xs hover:bg-[#2A2E22]'; btn.setAttribute('aria-label', 'Удалить строку'); btn.onclick = () => div.remove();
             div.appendChild(btn); c.appendChild(div);
         }
 
-        function getData(containerId, keys) {
+                function getData(containerId, keys) {
             const rows = document.getElementById(containerId).querySelectorAll('.flex');
             let arr = []; rows.forEach(r => {
                 let obj = {}; let valid = false;
@@ -497,8 +508,8 @@
             
             document.querySelectorAll('.stock-toggle-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.stock-toggle-btn[data-stock="true"]').classList.add('active');
-            document.getElementById('p-stock').value = 'true';
-            
+                    document.getElementById('p-stock').value = 'true';
+
             document.getElementById('specs-container').innerHTML = '';
             document.getElementById('eng-container').innerHTML = '';
             document.getElementById('opt-container').innerHTML = '';
@@ -512,9 +523,9 @@
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        const btnEditStyle = `background-color: #242427; color: #fff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid #3a3a42; font-size: 13px; white-space: nowrap;`;
-        const btnDeleteStyle = `background-color: #e74c3c; color: #ffffff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
-        const btnDetailsStyle = `background-color: #E5E5E5; color: #121214; padding: 8px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
+        const btnEditStyle = `background-color: #20231A; color: #F5F7E8; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid #3A3F2E; font-size: 13px; white-space: nowrap;`;
+        const btnDeleteStyle = `background-color: #B5432E; color: #ffffff; padding: 8px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
+        const btnDetailsStyle = `background-color: #5F7A2A; color: #F5F7E8; padding: 8px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-size: 13px; white-space: nowrap;`;
 
         async function loadData() {
             try {
@@ -527,17 +538,17 @@
                     sb.from('promocodes').select('*').order('created_at', { ascending: false }),
                     sb.from('projects').select('*').order('created_at', { ascending: false })
                 ]);
-
+                
                 const prods = prodsRes.data;
                 document.getElementById('prod-list').innerHTML = prods && prods.length ? prods.map(p => `
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#2a2a2e] py-3 gap-3">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#2A2E22] py-3 gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
                             <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
                             <div class="min-w-0">
-                                        <b class="text-white text-sm block truncate">${p.name}</b>
-                                <span class="text-[#8a8a91] text-xs whitespace-nowrap">
-                                    ${p.category || 'Вездеходы'} | <span class="text-white font-medium">${p.price} ₽</span> | 
-                                    <span class="${p.in_stock ? 'text-[#E5E5E5]' : 'text-[#e74c3c]'} font-medium">${p.in_stock ? 'В наличии' : 'Под заказ'}</span>
+                                <b class="text-[#F5F7E8] text-sm block truncate">${p.name}</b>
+                                <span class="text-[#8A8E75] text-xs whitespace-nowrap">
+                                    ${p.category || 'Вездеходы'} | <span class="text-[#F5F7E8] font-medium">${p.price} ₽</span> | 
+                                    <span class="${p.in_stock ? 'text-[#5F7A2A]' : 'text-[#B5432E]'} font-medium">${p.in_stock ? 'В наличии' : 'Под заказ'}</span>
                                 </span>
                             </div>
                         </div>
@@ -546,57 +557,57 @@
                             <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('product', '${p.id}', this)">Удалить</button>
                         </div>
                     </div>
-                `).join('') : '<p class="text-[#8a8a91] text-sm">Нет товаров</p>';
+                `).join('') : '<p class="text-[#8A8E75] text-sm">Нет товаров</p>';
 
                 const slides = slidesRes.data;
                 document.getElementById('slide-list').innerHTML = slides && slides.length ? slides.map(s => `
-                    <div class="bg-[#242427] p-4 rounded-lg flex gap-3 items-center">
+                    <div class="bg-[#20231A] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${s.image_url ? s.image_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
                             <div class="min-w-0">
-                                <b class="text-white text-sm block truncate">${s.title || 'Без заголовка'}</b>
-                                <span class="text-[#8a8a91] text-xs block truncate">Кнопка: ${s.button_text || 'Нет'} -> ${s.button_link || 'catalog'}</span>
+                                <b class="text-[#F5F7E8] text-sm block truncate">${s.title || 'Без заголовка'}</b>
+                                <span class="text-[#8A8E75] text-xs block truncate">Кнопка: ${s.button_text || 'Нет'} -> ${s.button_link || 'catalog'}</span>
                             </div>
-                            <div>
+                                                        <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('slide', '${s.id}', this)">Удалить</button>
                             </div>
                         </div>
                     </div>
-                `).join('') : '<p class="text-[#8a8a91] text-sm">Нет слайдов</p>';
+                `).join('') : '<p class="text-[#8A8E75] text-sm">Нет слайдов</p>';
 
                 const vids = vidsRes.data;
                 document.getElementById('vid-list').innerHTML = vids && vids.length ? vids.map(v => `
-                    <div class="bg-[#242427] p-4 rounded-lg flex gap-3 items-center">
+                    <div class="bg-[#20231A] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${v.img_url ? v.img_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
-                            <b class="text-white text-sm block truncate">${v.title || 'Видео'}</b>
-                                    <div>
+                            <b class="text-[#F5F7E8] text-sm block truncate">${v.title || 'Видео'}</b>
+                            <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('video', '${v.id}', this)">Удалить</button>
                             </div>
                         </div>
                     </div>
-                `).join('') : '<p class="text-[#8a8a91] text-sm">Нет видео</p>';
+                `).join('') : '<p class="text-[#8A8E75] text-sm">Нет видео</p>';
 
                 const leads = leadsRes.data;
                 currentLeadsCount = leads ? leads.length : 0;
                 document.getElementById('leads-list').innerHTML = leads && leads.length ? leads.map(l => {
                     const date = new Date(l.created_at).toLocaleString('ru');
                     return `
-                    <div class="border-b border-[#2a2a2e] py-3">
+                    <div class="border-b border-[#2A2E22] py-3">
                         <div class="flex justify-between items-start gap-2">
                             <div class="flex-1 min-w-0">
-                                <b class="text-white text-sm block">${l.name} - ${l.phone}</b>
-                                <span class="text-[10px] text-[#8a8a91] uppercase tracking-wide">${date}</span>
-                            </div>
+                                <b class="text-[#F5F7E8] text-sm block">${l.name} - ${l.phone}</b>
+                                <span class="text-[10px] text-[#8A8E75] uppercase tracking-wide">${date}</span>
+                                                            </div>
                             <div class="flex gap-2 shrink-0">
                                 <button type="button" style="${btnDetailsStyle}" onclick="toggleLeadDetails('${l.id}', this)">Подробнее</button>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('lead', '${l.id}', this)">Удалить</button>
                             </div>
                         </div>
-                        <div id="lead-details-${l.id}" class="hidden mt-3 bg-[#242427] p-3 rounded text-xs text-white whitespace-pre-line">${l.details || 'Нет деталей'}</div>
+                        <div id="lead-details-${l.id}" class="hidden mt-3 bg-[#20231A] p-3 rounded text-xs text-[#F5F7E8] whitespace-pre-line">${l.details || 'Нет деталей'}</div>
                     </div>
                     `;
-                }).join('') : '<p class="text-[#8a8a91] text-sm">Нет заявок</p>';
+                }).join('') : '<p class="text-[#8A8E75] text-sm">Нет заявок</p>';
 
                 updateLeadsBadge(currentLeadsCount);
 
@@ -606,7 +617,7 @@
                     document.getElementById('ci-b1-text').value = ci.block1_text || '';
                     document.getElementById('ci-b2-title').value = ci.block2_title || '';
                     document.getElementById('ci-b2-text').value = ci.block2_text || '';
-                                        document.getElementById('ci-b3-title').value = ci.block3_title || '';
+                    document.getElementById('ci-b3-title').value = ci.block3_title || '';
                     document.getElementById('ci-b3-text').value = ci.block3_text || '';
                     document.getElementById('ci-calc-initial').value = ci.calc_initial || 20;
                     document.getElementById('ci-calc-rate').value = ci.calc_rate || 15;
@@ -615,39 +626,39 @@
 
                 const promos = promosRes.data;
                 document.getElementById('promo-list').innerHTML = promos && promos.length ? promos.map(p => `
-                    <div class="flex justify-between items-center bg-[#242427] p-3 rounded-lg mb-2 gap-2">
-                        <div class="min-w-0"><b class="text-white text-sm">${p.code}</b> <span class="text-[#8a8a91] text-xs">- ${p.discount_percent}${p.discount_type === 'fixed' ? ' ₽' : '%'}</span></div>
-                        <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('promo', '${p.id}', this)">Удалить</button>
+                    <div class="flex justify-between items-center bg-[#20231A] p-3 rounded-lg mb-2 gap-2">
+                        <div class="min-w-0"><b class="text-[#F5F7E8] text-sm">${p.code}</b> <span class="text-[#8A8E75] text-xs">- ${p.discount_percent}${p.discount_type === 'fixed' ? ' ₽' : '%'}</span></div>
+                                                <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('promo', '${p.id}', this)">Удалить</button>
                     </div>
-                `).join('') : '<p class="text-[#8a8a91] text-xs">Промокодов нет</p>';
+                `).join('') : '<p class="text-[#8A8E75] text-xs">Промокодов нет</p>';
 
                 const projects = projectsRes.data;
                 document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
-                    <div class="bg-[#242427] p-4 rounded-lg flex gap-3 items-center">
+                    <div class="bg-[#20231A] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${p.image_url ? p.image_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
                             <div class="min-w-0">
-                                <b class="text-white text-sm block truncate">${p.title}</b>
-                                <span class="text-[#8a8a91] text-xs line-clamp-2 block">${p.description || ''}</span>
+                                <b class="text-[#F5F7E8] text-sm block truncate">${p.title}</b>
+                                <span class="text-[#8A8E75] text-xs line-clamp-2 block">${p.description || ''}</span>
                             </div>
                             <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('project', '${p.id}', this)">Удалить</button>
                             </div>
                         </div>
                     </div>
-                `).join('') : '<p class="text-[#8a8a91] text-sm">Нет проектов</p>';
+                `).join('') : '<p class="text-[#8A8E75] text-sm">Нет проектов</p>';
             } catch (err) {
                 showToast("Ошибка загрузки данных: " + (err.message || ""), true);
             }
         }
 
         function toggleLeadDetails(id, btn) {
-                    const el = document.getElementById('lead-details-' + id);
+            const el = document.getElementById('lead-details-' + id);
             if(el) {
                 el.classList.toggle('hidden');
                 btn.innerText = el.classList.contains('hidden') ? 'Подробнее' : 'Свернуть';
             }
-        }
+                    }
 
         function editProduct(id) {
             sb.from('products').select('*').eq('id', id).single().then(({ data }) => {
@@ -677,8 +688,8 @@
                 document.getElementById('form-title').innerText = 'Редактирование: ' + data.name;
                 window.scrollTo(0, 0);
             });
-        }
-        
+                    }
+
         function confirmDelete(type, id, btn) {
             pendingDelete = { type, id, btn };
             document.getElementById('confirm-modal').classList.remove('hidden');
@@ -707,7 +718,7 @@
                     const { data: prod } = await sb.from('products').select('gallery').eq('id', id).single();
                     if (prod && prod.gallery && prod.gallery.length > 0) {
                         const names = prod.gallery.map(u => u.split('/').pop());
-                        try { await sb.storage.from('product-photos').remove(names); } catch(e) { console.error("Storage error", e); }
+                                                try { await sb.storage.from('product-photos').remove(names); } catch(e) { console.error("Storage error", e); }
                     }
                     const res = await sb.from('products').delete().eq('id', id);
                     delError = res.error;
@@ -715,7 +726,7 @@
                     const { data: sl } = await sb.from('slides').select('image_url').eq('id', id).single();
                     if (sl && sl.image_url) { 
                         try { await sb.storage.from('product-photos').remove([sl.image_url.split('/').pop()]); } catch(e) { console.error("Storage error", e); }
-                            }
+                    }
                     const res = await sb.from('slides').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'video') {
@@ -737,7 +748,7 @@
                     delError = res.error;
                 } else if (type === 'promo') {
                     const res = await sb.from('promocodes').delete().eq('id', id);
-                    delError = res.error;
+                                        delError = res.error;
                 }
 
                 if (delError) throw delError;
@@ -752,7 +763,7 @@
         }
 
         async function saveProduct(btn) {
-                        btn.disabled = true; 
+            btn.disabled = true; 
             btn.innerText = 'Сохранение...';
             
             try {
@@ -766,9 +777,10 @@
                 const engines = getData('eng-container', ['name','price','desc']);
                 const options = getData('opt-container', ['name','price','desc']);
                 const files = document.getElementById('p-img').files;
-                
-                if(!name || !price) { 
+
+                            if(!name || !price) { 
                     showToast("Заполните название и цену!"); 
+                    btn.disabled = false; btn.innerText = 'Сохранить';
                     return;
                 }
                 
@@ -789,14 +801,14 @@
                         } catch(err) {
                             console.error("File error", err);
                             showToast(`Ошибка с фото ${i+1}: ` + err.message, true);
-                                                    }
+                        }
                     }
                 }
                 
                 const payload = { name, category, price: parseFloat(price), description: desc, specs, engines, options, gallery, in_stock: stock };
                 btn.innerText = "Сохранение в базу...";
-                
-                if (id) { 
+
+                            if (id) { 
                     const { error } = await sb.from('products').update(payload).eq('id', id);
                     if (error) throw error;
                     showToast("Обновлено!"); 
@@ -825,8 +837,8 @@
                 const file = document.getElementById('v-img').files[0];
                 if(!url) { showToast("Вставьте ссылку!"); return; }
                 let imgUrl = '';
-                                if (file) {
-                    const comp = await compressImage(file);
+                if (file) {
+                                        const comp = await compressImage(file);
                     const fName = `vid_${Date.now()}.webp`;
                     await sb.storage.from('product-photos').upload(fName, comp);
                     imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
@@ -837,8 +849,11 @@
                 showToast("Видео добавлено!");
                 document.getElementById('v-title').value = ''; document.getElementById('v-url').value = ''; document.getElementById('v-img').value = '';
                 loadData();
-            } catch (e) { showToast("Ошибка: " + e.message, true); }
-            finally { btn.disabled = false; btn.innerText = 'Загрузить Видео'; }
+            } catch (e) { 
+                showToast("Ошибка: " + e.message, true); 
+            } finally { 
+                btn.disabled = false; btn.innerText = 'Загрузить Видео'; 
+            }
         }
 
         async function saveSlide(btn) {
@@ -853,15 +868,18 @@
                 const comp = await compressImage(file);
                 const fName = `slide_${Date.now()}.webp`;
                 await sb.storage.from('product-photos').upload(fName, comp);
-                const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
+                                const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
                 const { error } = await sb.from('slides').insert([{ title, subtitle, button_text: btnText, button_link: btnLink, image_url: imgUrl }]);
                 if (error) throw error;
                 safeStorage.del('cache_slides');
                 showToast("Слайд добавлен!");
                 document.getElementById('s-title').value = ''; document.getElementById('s-subtitle').value = ''; document.getElementById('s-btn').value = '';
                 loadData();
-            } catch (e) { showToast("Ошибка: " + e.message, true); }
-                    finally { btn.disabled = false; btn.innerText = 'Загрузить Слайд'; }
+            } catch (e) { 
+                showToast("Ошибка: " + e.message, true); 
+            } finally { 
+                btn.disabled = false; btn.innerText = 'Загрузить Слайд'; 
+            }
         }
 
         async function saveProject(btn) {
@@ -880,9 +898,12 @@
                 safeStorage.del('cache_projects');
                 showToast("Проект добавлен!");
                 document.getElementById('pr-title').value = ''; document.getElementById('pr-desc').value = ''; document.getElementById('pr-img').value = '';
-                loadData();
-            } catch (e) { showToast("Ошибка: " + e.message, true); }
-            finally { btn.disabled = false; btn.innerText = 'Загрузить Проект'; }
+                                loadData();
+            } catch (e) { 
+                showToast("Ошибка: " + e.message, true); 
+            } finally { 
+                btn.disabled = false; btn.innerText = 'Загрузить Проект'; 
+            }
         }
 
         async function saveCompanyInfo(btn) {
@@ -898,7 +919,7 @@
                     block2_text: document.getElementById('ci-b2-text').value,
                     block3_title: document.getElementById('ci-b3-title').value,
                     block3_text: document.getElementById('ci-b3-text').value,
-                                        calc_initial: parseInt(document.getElementById('ci-calc-initial').value) || 20,
+                    calc_initial: parseInt(document.getElementById('ci-calc-initial').value) || 20,
                     calc_rate: parseInt(document.getElementById('ci-calc-rate').value) || 15,
                     calc_term: parseInt(document.getElementById('ci-calc-term').value) || 36,
                 };
@@ -907,7 +928,7 @@
                 safeStorage.del('cache_company');
                 showToast("Настройки сохранены!");
             } catch (e) { 
-                console.error("Save settings error", e);
+                            console.error("Save settings error", e);
                 showToast("Ошибка: " + e.message, true); 
             } finally { 
                 btn.disabled = false; 
@@ -915,27 +936,33 @@
             }
         }
 
-        async function addPromo() {
+        async function addPromo(btn) {
             const code = document.getElementById('promo-code').value.trim().toUpperCase();
             const discount = parseInt(document.getElementById('promo-discount').value);
             const type = document.getElementById('promo-type').value;
             if(!code || !discount) { showToast("Заполните код и значение"); return; }
-            const { error } = await sb.from('promocodes').insert([{ code, discount_percent: discount, discount_type: type, is_active: true }]);
-            if (error) { showToast("Ошибка: " + error.message, true); }
-            else {
+            
+            btn.disabled = true; btn.innerText = 'Добавление...';
+            try {
+                const { error } = await sb.from('promocodes').insert([{ code, discount_percent: discount, discount_type: type, is_active: true }]);
+                if (error) throw error;
                 showToast("Промокод добавлен!");
                 document.getElementById('promo-code').value = ''; document.getElementById('promo-discount').value = '';
                 loadData();
+            } catch (error) {
+                showToast("Ошибка: " + error.message, true);
+            } finally {
+                btn.disabled = false; btn.innerText = 'Добавить Промокод';
             }
         }
 
         let pollTimer = null;
         function startPollingLeads() {
-            if (pollTimer) clearInterval(pollTimer);
+                        if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(checkNewLeads, 30000); 
         }
 
-                async function checkNewLeads() {
+        async function checkNewLeads() {
             if (!sb) return;
             try {
                 const { count, error } = await sb.from('leads').select('*', { count: 'exact', head: true });
@@ -960,17 +987,5 @@
 
         checkInitialAuth();
     </script>
-
-    <script>
-        function keepSupabaseAwake() {
-            if (typeof sb !== 'undefined' && sb) {
-                sb.from('products').select('id', { head: true, count: 'exact' })
-                  .then(() => { console.log('База активна'); })
-                  .catch(e => { console.log('Ошибка пинга базы', e); });
-            }
-        }
-        keepSupabaseAwake();
-        setInterval(keepSupabaseAwake, 180000);
-            </script>
 </body>
 </html>
