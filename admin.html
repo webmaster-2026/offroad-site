@@ -215,7 +215,7 @@
                 </div>
 
                 <div id="tab-promos" class="admin-tab hidden">
-                                <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
                         <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Промокод</h3>
                         <div class="flex flex-col md:flex-row gap-2 mb-4">
                             <input type="text" id="promo-code" placeholder="Код (например: ЛЕТО)" class="flex-1 p-3 rounded">
@@ -351,7 +351,7 @@
             const errDiv = document.getElementById('login-error');
             errDiv.innerText = ''; errDiv.classList.add('hidden');
 
-                    if (!sb) { showError("БД не загрузилась!"); return; }
+                    if (!sb) { showError("Ошибка: БД не загрузилась или ключи неверны!"); return; }
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value.trim();
 
@@ -366,7 +366,7 @@
                 if (error) {
                     let errMsg = error.message;
                     if (errMsg === "Invalid login credentials") errMsg = "Неверный логин или пароль";
-                    showError("Ошибка: " + errMsg);
+                    showError("Ошибка авторизации: " + errMsg);
                     btn.disabled = false; 
                     btn.innerText = "Войти";
                 } else if (data.user) {
@@ -380,14 +380,14 @@
                     btn.innerText = "Войти";
                 }
             } catch (e) {
-                showError(e.message || "Критическая ошибка сети.");
+                showError("Критическая ошибка сети: " + e.message);
                 btn.disabled = false; 
                 btn.innerText = "Войти";
             }
         }
 
-                function compressImage(file) {
-            return new Promise((resolve, reject) => {
+        function compressImage(file) {
+                    return new Promise((resolve, reject) => {
                 if (file.size > 20 * 1024 * 1024) return reject(new Error("Файл слишком большой (макс 20МБ)"));
                 let r = new FileReader(); 
                 r.onload = e => {
@@ -417,13 +417,13 @@
             document.querySelectorAll('.menu-link').forEach(b => b.classList.remove('active'));
             document.getElementById('menu-' + tabName).classList.add('active');
             if (tabName === 'products') resetForm();
-
-                    if (tabName === 'leads') {
+            
+            if (tabName === 'leads') {
                 document.getElementById('leads-badge').style.display = 'none';
                 safeStorage.set('leadsViewedCount', currentLeadsCount);
             }
         }
-
+        
         function setupToggleButtons() {
             document.querySelectorAll('.cat-toggle-btn').forEach(btn => {
                 btn.onclick = () => {
@@ -448,7 +448,7 @@
             const div = document.createElement('div'); div.className = 'flex gap-2 mb-2';
             fields.forEach(f => {
                 const inp = document.createElement('input'); inp.type = f === 'price' ? 'number' : 'text';
-                                const placeholders = {
+                const placeholders = {
                     'label': 'Название', 'value': 'Значение', 'name': 'Название', 'price': 'Цена', 'desc': 'Описание'
                 };
                 inp.placeholder = placeholders[f] || f; 
@@ -459,7 +459,7 @@
             const btn = document.createElement('button'); btn.innerText = '✕'; btn.className = 'bg-[#20231A] text-[#F5F7E8] px-3 rounded text-xs hover:bg-[#2A2E22]'; btn.setAttribute('aria-label', 'Удалить строку'); btn.onclick = () => div.remove();
             div.appendChild(btn); c.appendChild(div);
         }
-
+        
         function getData(containerId, keys) {
             const rows = document.getElementById(containerId).querySelectorAll('.flex');
             let arr = []; rows.forEach(r => {
@@ -478,7 +478,7 @@
                 lastRow.querySelectorAll('input').forEach(inp => inp.value = item[inp.dataset.key] || '');
             });
         }
-        
+
         function resetForm() {
             document.getElementById('p-id').value = '';
             document.querySelectorAll('#p-name, #p-price, #p-desc').forEach(el => el.value = '');
@@ -495,7 +495,7 @@
             document.getElementById('specs-container').innerHTML = '';
             document.getElementById('eng-container').innerHTML = '';
             document.getElementById('opt-container').innerHTML = '';
-            
+                    
             const pImg = document.getElementById('p-img');
             pImg.value = ''; 
             updateFileLabel(pImg, 'p-img-status');
@@ -508,7 +508,7 @@
             if (!label) return;
             if (input.files.length === 0) {
                 label.innerText = 'Файлы не выбраны';
-                    } else {
+            } else {
                 label.innerText = `Выбрано ${input.files.length} ${input.files.length === 1 ? 'фото' : 'фото'}`;
             }
         }
@@ -531,14 +531,14 @@
                     sb.from('leads').select('*').order('created_at', { ascending: false }),
                     sb.from('company_info').select('*').eq('id', 1).single(),
                     sb.from('promocodes').select('*').order('created_at', { ascending: false }),
-                    sb.from('projects').select('*').order('created_at', { ascending: false })
+                            sb.from('projects').select('*').order('created_at', { ascending: false })
                 ]);
 
                 const prods = prodsRes.data;
                 document.getElementById('prod-list').innerHTML = prods && prods.length ? prods.map(p => `
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#2A2E22] py-3 gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
-                                                    <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
+                            <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
                             <div class="min-w-0">
                                 <b class="text-[#F5F7E8] text-sm block truncate">${p.name}</b>
                                 <span class="text-[#8A8E75] text-xs whitespace-nowrap">
@@ -598,12 +598,12 @@
                                 <button type="button" style="${btnDetailsStyle}" onclick="toggleLeadDetails('${l.id}', this)">Подробнее</button>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('lead', '${l.id}', this)">Удалить</button>
                             </div>
-                                                    </div>
+                        </div>
                         <div id="lead-details-${l.id}" class="hidden mt-3 bg-[#20231A] p-3 rounded text-xs text-[#F5F7E8] whitespace-pre-line">${l.details || 'Нет деталей'}</div>
                     </div>
                     `;
                 }).join('') : '<p class="text-[#8A8E75] text-sm">Нет заявок</p>';
-
+                
                 updateLeadsBadge(currentLeadsCount);
 
                 const ci = ciRes.data;
@@ -614,7 +614,7 @@
                     document.getElementById('ci-b2-text').value = ci.block2_text || '';
                     document.getElementById('ci-b3-title').value = ci.block3_title || '';
                     document.getElementById('ci-b3-text').value = ci.block3_text || '';
-                    document.getElementById('ci-calc-initial).value = ci.calc_initial || 20;
+                    document.getElementById('ci-calc-initial').value = ci.calc_initial || 20;
                     document.getElementById('ci-calc-rate').value = ci.calc_rate || 15;
                     document.getElementById('ci-calc-term').value = ci.calc_term || 36;
                 }
@@ -628,7 +628,7 @@
                 `).join('') : '<p class="text-[#8A8E75] text-xs">Промокодов нет</p>';
 
                 const projects = projectsRes.data;
-                                document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
+                document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
                     <div class="bg-[#20231A] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${p.image_url ? p.image_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
@@ -638,7 +638,7 @@
                             </div>
                             <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('project', '${p.id}', this)">Удалить</button>
-                            </div>
+                                                            </div>
                         </div>
                     </div>
                 `).join('') : '<p class="text-[#8A8E75] text-sm">Нет проектов</p>';
@@ -658,7 +658,7 @@
         function editProduct(id) {
             sb.from('products').select('*').eq('id', id).single().then(({ data }) => {
                 showTab('products');
-                                document.getElementById('p-id').value = data.id;
+                document.getElementById('p-id').value = data.id;
                 document.getElementById('p-name').value = data.name;
                 
                 document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -673,7 +673,7 @@
                 document.getElementById('p-stock').value = stockVal;
 
                 document.getElementById('p-price').value = data.price;
-                document.getElementById('p-desc').value = data.description;
+                                document.getElementById('p-desc').value = data.description;
                 setTimeout(() => autoResize(document.getElementById('p-desc')), 100); 
                 fillData('specs-container', data.specs, ['label','value']);
                 fillData('eng-container', data.engines, ['name','price','desc']);
@@ -688,7 +688,7 @@
                 window.scrollTo(0, 0);
             });
         }
-        
+
         function confirmDelete(type, id, btn) {
             pendingDelete = { type, id, btn };
             document.getElementById('confirm-modal').classList.remove('hidden');
@@ -708,7 +708,7 @@
             pendingDelete = { type: null, id: null, btn: null };
         };
 
-        async function executeDelete(type, id, btn) {
+                async function executeDelete(type, id, btn) {
             if(btn) { btn.disabled = true; btn.innerText = '...'; }
             try {
                 let delError = null;
@@ -718,7 +718,7 @@
                     if (prod && prod.gallery && prod.gallery.length > 0) {
                         const names = prod.gallery.map(u => u.split('/').pop());
                         try { await sb.storage.from('product-photos').remove(names); } catch(e) { console.error("Storage error", e); }
-                                            }
+                    }
                     const res = await sb.from('products').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'slide') {
@@ -743,12 +743,12 @@
                     const res = await sb.from('projects').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'lead') {
-                    const res = await sb.from('leads').delete().eq('id', id);
+                                        const res = await sb.from('leads').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'promo') {
                     const res = await sb.from('promocodes').delete().eq('id', id);
                     delError = res.error;
-                                    }
+                }
 
                 if (delError) throw delError;
 
@@ -778,7 +778,7 @@
                 if(!name || !price) { 
                     btn.disabled = false; btn.innerText = 'Сохранить';
                     return;
-                        }
+                                    }
                 
                 let gallery = [];
                 if (id && files.length === 0) {
@@ -808,12 +808,12 @@
                     if (error) throw error;
                 } else { 
                     const { error } = await sb.from('products').insert([payload]);
-                                        if (error) throw error;
+                    if (error) throw error;
                 }
                 
                 safeStorage.del('cache_products');
                 resetForm(); loadData();
-            } catch (e) { 
+                            } catch (e) { 
                 console.error("Save error", e);
             } finally { 
                 btn.disabled = false; 
@@ -838,7 +838,7 @@
                 const { error } = await sb.from('videos').insert([{ title, url, img_url: imgUrl }]);
                 if (error) throw error;
                 safeStorage.del('cache_videos');
-                                document.getElementById('v-title').value = ''; document.getElementById('v-url').value = '';
+                document.getElementById('v-title').value = ''; document.getElementById('v-url').value = '';
                 const vImg = document.getElementById('v-img');
                 vImg.value = ''; updateFileLabel(vImg, 'v-img-status');
                 loadData();
@@ -848,7 +848,7 @@
                 btn.disabled = false; btn.innerText = 'Загрузить Видео'; 
             }
         }
-
+        
         async function saveSlide(btn) {
             btn.disabled = true; btn.innerText = 'Сохранение...';
             try {
@@ -868,7 +868,7 @@
                 document.getElementById('s-title').value = ''; document.getElementById('s-subtitle').value = ''; document.getElementById('s-btn').value = '';
                 const sImg = document.getElementById('s-img');
                 sImg.value = ''; updateFileLabel(sImg, 's-img-status');
-                                loadData();
+                loadData();
             } catch (e) { 
                 console.error("Save slide error", e);
             } finally { 
@@ -883,7 +883,7 @@
                 const desc = document.getElementById('pr-desc').value;
                 const file = document.getElementById('pr-img').files[0];
                 if(!file || !title) { return; }
-                const comp = await compressImage(file);
+                                const comp = await compressImage(file);
                 const fName = `pr_${Date.now()}.webp`;
                 await sb.storage.from('product-photos').upload(fName, comp);
                 const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
@@ -898,7 +898,7 @@
                 console.error("Save project error", e);
             } finally { 
                 btn.disabled = false; btn.innerText = 'Загрузить Проект'; 
-                        }
+            }
         }
 
         async function saveCompanyInfo(btn) {
@@ -918,7 +918,7 @@
                     calc_rate: parseInt(document.getElementById('ci-calc-rate').value) || 15,
                     calc_term: parseInt(document.getElementById('ci-calc-term').value) || 36,
                 };
-                const { error } = await sb.from('company_info').update(payload).eq('id', 1);
+                                const { error } = await sb.from('company_info').update(payload).eq('id', 1);
                 if (error) throw error;
                 safeStorage.del('cache_company');
             } catch (e) { 
@@ -928,7 +928,7 @@
                 btn.innerText = originalText;
             }
         }
-        
+
         async function addPromo(btn) {
             const code = document.getElementById('promo-code').value.trim().toUpperCase();
             const discount = parseInt(document.getElementById('promo-discount').value);
@@ -953,12 +953,12 @@
             if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(checkNewLeads, 30000); 
         }
-
+        
         async function checkNewLeads() {
             if (!sb) return;
             try {
                 const { count, error } = await sb.from('leads').select('*', { count: 'exact', head: true });
-                        if (error) throw error;
+                if (error) throw error;
                 currentLeadsCount = count || 0;
                 updateLeadsBadge(currentLeadsCount);
             } catch(e) { console.error("Polling error", e); }
