@@ -11,15 +11,9 @@
         body { font-family: 'Inter', sans-serif; background: #121410; color: #e4e6d9; letter-spacing: -0.01em; }
         .heading { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; font-style: italic; }
         
-        /* ЖЕСТКАЯ ЗАЩИТА ОТ ВЫДЕЛЕНИЯ ТЕКСТА НА КНОПКАХ */
-        button, a, label {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
-            cursor: pointer;
+        button, a, label, input[type="button"], input[type="submit"] {
+            -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important;
+            -webkit-touch-callout: none !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer;
         }
         input, textarea { -webkit-user-select: text; user-select: text; }
         
@@ -147,8 +141,8 @@
                         <label class="text-xs text-[#8A8E75] font-medium">Доп. Опции</label><div id="opt-container" class="mb-2"></div>
                         <button type="button" class="w-full border border-dashed border-[#3A3F2E] text-[#8A8E75] p-2 rounded mb-4 text-xs hover:border-[#8F9A5D] hover:text-[#F5F7E8]" onclick="addRow('opt-container', ['name','price','desc'])">+ Опция</button>
                         <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фотографии Товара</label>
-                        <input type="file" id="p-img" multiple>
-                        <div id="img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium"></div>
+                        <input type="file" id="p-img" multiple onchange="updateFileLabel(this, 'p-img-status')">
+                        <div id="p-img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium">Файлы не выбраны</div>
                         <button type="button" id="btn-save-prod" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveProduct(this)">Сохранить</button>
                         <button type="button" class="bg-[#20231A] w-full p-3 font-medium rounded mt-2 text-sm hover:bg-[#2A2E22] text-[#F5F7E8]" onclick="resetForm()">Очистить</button>
                     </div>
@@ -171,7 +165,8 @@
                             <option value="contacts">В Контакты</option>
                         </select>
                         <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фоновое Фото Слайда</label>
-                        <input type="file" id="s-img" accept="image/*">
+                        <input type="file" id="s-img" accept="image/*" onchange="updateFileLabel(this, 's-img-status')">
+                        <div id="s-img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium">Файлы не выбраны</div>
                         <button type="button" id="btn-save-slide" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveSlide(this)">Загрузить Слайд</button>
                     </div>
                     <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
@@ -186,7 +181,8 @@
                         <input type="text" id="pr-title" placeholder="Название Проекта" class="w-full p-3 mb-4 rounded">
                         <textarea id="pr-desc" rows="3" placeholder="Краткое описание" class="w-full p-3 mb-4 rounded min-h-[100px]" oninput="autoResize(this)"></textarea>
                         <label class="text-xs text-[#8A8E75] font-medium block mb-2">Фото Проекта</label>
-                        <input type="file" id="pr-img" accept="image/*">
+                        <input type="file" id="pr-img" accept="image/*" onchange="updateFileLabel(this, 'pr-img-status')">
+                        <div id="pr-img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium">Файлы не выбраны</div>
                         <button type="button" id="btn-save-pr" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveProject(this)">Загрузить Проект</button>
                     </div>
                     <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
@@ -201,7 +197,8 @@
                         <input type="text" id="v-title" placeholder="Название" class="w-full p-3 mb-4 rounded">
                         <input type="text" id="v-url" placeholder="Ссылка на YouTube/RuTube" class="w-full p-3 mb-4 rounded">
                         <label class="text-xs text-[#8A8E75] font-medium block mb-2">Превью Фото (необязательно)</label>
-                        <input type="file" id="v-img" accept="image/*">
+                        <input type="file" id="v-img" accept="image/*" onchange="updateFileLabel(this, 'v-img-status')">
+                        <div id="v-img-status" class="text-xs text-[#F5F7E8] mt-2 font-medium">Файлы не выбраны</div>
                         <button type="button" id="btn-save-vid" class="btn-accent w-full p-3 font-medium rounded text-sm mt-6 flex justify-center items-center" onclick="saveVideo(this)">Загрузить Видео</button>
                     </div>
                     <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
@@ -218,13 +215,13 @@
                 </div>
 
                 <div id="tab-promos" class="admin-tab hidden">
-                    <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
+                                <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg mb-6">
                         <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Добавить Промокод</h3>
                         <div class="flex flex-col md:flex-row gap-2 mb-4">
                             <input type="text" id="promo-code" placeholder="Код (например: ЛЕТО)" class="flex-1 p-3 rounded">
                             <select id="promo-type" class="p-3 rounded">
                                 <option value="percent">Скидка в %</option>
-                                                    <option value="fixed">Фикс. сумма (₽)</option>
+                                <option value="fixed">Фикс. сумма (₽)</option>
                             </select>
                             <input type="number" id="promo-discount" placeholder="Значение" class="md:w-32 p-3 rounded">
                         </div>
@@ -251,14 +248,14 @@
                         <button type="button" id="btn-save-company" class="btn-accent w-full p-3 font-medium rounded text-sm mt-4 flex justify-center items-center" onclick="saveCompanyInfo(this)">Сохранить Тексты</button>
                     </div>
                     <div class="bg-[#1A1D14] p-8 border border-[#2A2E22] rounded-lg">
-                        <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Настройки Калькулятора Лизинга</h3>
+                                                <h3 class="text-[#F5F7E8] mb-6 font-semibold tracking-tight text-lg heading">Настройки Калькулятора Лизинга</h3>
                         <p class="text-xs text-[#8A8E75] mb-4">Формула: (Цена - Первый взнос) * Удорожание / Срок. Заполняйте только цифрами.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="text-xs text-[#F5F7E8] font-medium">Первый взнос (%)</label>
                                 <input type="number" id="ci-calc-initial" placeholder="Напр: 20" class="w-full p-3 rounded mt-1">
                                 <small class="text-[#8A8E75] text-xs">Процент от цены, который клиент платит сразу.</small>
-                                                            </div>
+                            </div>
                             <div>
                                 <label class="text-xs text-[#F5F7E8] font-medium">Удорожание (%)</label>
                                 <input type="number" id="ci-calc-rate" placeholder="Напр: 15" class="w-full p-3 rounded mt-1">
@@ -285,13 +282,12 @@
                 <button id="cancel-delete" class="flex-1 bg-[#20231A] hover:bg-[#2A2E22] text-[#F5F7E8] font-medium py-3 rounded text-sm transition">Отмена</button>
                 <button id="confirm-delete" class="flex-1 bg-[#B5432E] hover:bg-[#9A3625] text-[#F5F7E8] font-medium py-3 rounded text-sm transition">Удалить</button>
             </div>
-        </div>
+                    </div>
     </div>
 
-    
     <script>
-        const SUPABASE_URL = 'https://icpngypgwebzniapblpc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcG5neXBnd2Viem5pYXBibHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MzQ0MDMsImV4cCI6MjEwNjExMDQwM30.jfyD1VbiviTQilQ1XTuFbpthcgkV_2zvNjip2Bed9fw';
+        const SUPABASE_URL = 'https://ВАШ_КОД.supabase.co';
+        const SUPABASE_ANON_KEY = 'ВАШ_КЛЮЧ';
         
         let sb = null;
         let currentLeadsCount = 0;
@@ -313,20 +309,6 @@
             if(errDiv) { errDiv.innerText = msg; errDiv.classList.remove('hidden'); }
         }
 
-        function showToast(msg, isError = false) {
-            let toast = document.getElementById('toast-div');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:4px;font-weight:500;font-family:Inter,sans-serif;text-transform:uppercase;letter-spacing:1px;z-index:9999;opacity:0;transition:opacity 0.3s, transform 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.5);font-size:14px;background:#5F7A2A;color:#F5F7E8;text-align:center;';
-                document.body.appendChild(toast);
-            }
-            if (isError) { toast.style.background = '#B5432E'; toast.style.color = '#fff'; } 
-            else { toast.style.background = '#5F7A2A'; toast.style.color = '#F5F7E8'; }
-                        toast.style.opacity = '1';
-            clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
-        }
-
         function togglePass() {
             const inp = document.getElementById('pass');
             const btn = document.getElementById('pass-toggle-btn');
@@ -334,7 +316,7 @@
                 inp.type = 'text';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
             } else {
-                inp.type = 'password';
+                                inp.type = 'password';
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
             }
         }
@@ -356,7 +338,7 @@
                 if (session) {
                     document.getElementById('auth').classList.add('hidden');
                     document.getElementById('panel').classList.remove('hidden');
-                            if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
+                    if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
                 } else {
                     document.getElementById('auth').classList.remove('hidden');
                     document.getElementById('panel').classList.add('hidden');
@@ -369,7 +351,7 @@
             const errDiv = document.getElementById('login-error');
             errDiv.innerText = ''; errDiv.classList.add('hidden');
 
-            if (!sb) { showError("БД не загрузилась!"); return; }
+                    if (!sb) { showError("БД не загрузилась!"); return; }
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value.trim();
 
@@ -388,7 +370,7 @@
                     btn.disabled = false; 
                     btn.innerText = "Войти";
                 } else if (data.user) {
-                                        btn.innerText = "Успех! Загрузка...";
+                    btn.innerText = "Успех! Загрузка...";
                     document.getElementById('auth').classList.add('hidden');
                     document.getElementById('panel').classList.remove('hidden');
                     if (!window.dataLoaded) { loadData(); window.dataLoaded = true; startPollingLeads(); }
@@ -404,7 +386,7 @@
             }
         }
 
-        function compressImage(file) {
+                function compressImage(file) {
             return new Promise((resolve, reject) => {
                 if (file.size > 20 * 1024 * 1024) return reject(new Error("Файл слишком большой (макс 20МБ)"));
                 let r = new FileReader(); 
@@ -418,7 +400,7 @@
                         c.getContext('2d').drawImage(img, 0, 0, w, h);
                         c.toBlob(b => {
                             if(b) resolve(b);
-                                                        else resolve(file); 
+                            else resolve(file); 
                         }, 'image/webp', 0.7); 
                     }; 
                     img.onerror = () => reject(new Error("Не удалось прочитать изображение"));
@@ -435,8 +417,8 @@
             document.querySelectorAll('.menu-link').forEach(b => b.classList.remove('active'));
             document.getElementById('menu-' + tabName).classList.add('active');
             if (tabName === 'products') resetForm();
-            
-            if (tabName === 'leads') {
+
+                    if (tabName === 'leads') {
                 document.getElementById('leads-badge').style.display = 'none';
                 safeStorage.set('leadsViewedCount', currentLeadsCount);
             }
@@ -448,7 +430,7 @@
                     document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     document.getElementById('p-category').value = btn.dataset.cat;
-                                    };
+                };
             });
 
             document.querySelectorAll('.stock-toggle-btn').forEach(btn => {
@@ -466,7 +448,7 @@
             const div = document.createElement('div'); div.className = 'flex gap-2 mb-2';
             fields.forEach(f => {
                 const inp = document.createElement('input'); inp.type = f === 'price' ? 'number' : 'text';
-                const placeholders = {
+                                const placeholders = {
                     'label': 'Название', 'value': 'Значение', 'name': 'Название', 'price': 'Цена', 'desc': 'Описание'
                 };
                 inp.placeholder = placeholders[f] || f; 
@@ -478,7 +460,7 @@
             div.appendChild(btn); c.appendChild(div);
         }
 
-                function getData(containerId, keys) {
+        function getData(containerId, keys) {
             const rows = document.getElementById(containerId).querySelectorAll('.flex');
             let arr = []; rows.forEach(r => {
                 let obj = {}; let valid = false;
@@ -496,7 +478,7 @@
                 lastRow.querySelectorAll('input').forEach(inp => inp.value = item[inp.dataset.key] || '');
             });
         }
-
+        
         function resetForm() {
             document.getElementById('p-id').value = '';
             document.querySelectorAll('#p-name, #p-price, #p-desc').forEach(el => el.value = '');
@@ -508,14 +490,27 @@
             
             document.querySelectorAll('.stock-toggle-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.stock-toggle-btn[data-stock="true"]').classList.add('active');
-                    document.getElementById('p-stock').value = 'true';
+            document.getElementById('p-stock').value = 'true';
 
             document.getElementById('specs-container').innerHTML = '';
             document.getElementById('eng-container').innerHTML = '';
             document.getElementById('opt-container').innerHTML = '';
-            document.getElementById('p-img').value = ''; 
-            document.getElementById('img-status').innerText = '';
+            
+            const pImg = document.getElementById('p-img');
+            pImg.value = ''; 
+            updateFileLabel(pImg, 'p-img-status');
+            
             document.getElementById('form-title').innerText = 'Добавить Товар';
+        }
+
+        function updateFileLabel(input, labelId) {
+            const label = document.getElementById(labelId);
+            if (!label) return;
+            if (input.files.length === 0) {
+                label.innerText = 'Файлы не выбраны';
+                    } else {
+                label.innerText = `Выбрано ${input.files.length} ${input.files.length === 1 ? 'фото' : 'фото'}`;
+            }
         }
 
         function autoResize(textarea) {
@@ -538,12 +533,12 @@
                     sb.from('promocodes').select('*').order('created_at', { ascending: false }),
                     sb.from('projects').select('*').order('created_at', { ascending: false })
                 ]);
-                
+
                 const prods = prodsRes.data;
                 document.getElementById('prod-list').innerHTML = prods && prods.length ? prods.map(p => `
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#2A2E22] py-3 gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
+                                                    <img src="${p.gallery && p.gallery[0] ? p.gallery[0] : 'https://via.placeholder.com/60'}?width=60&quality=50" class="w-10 h-10 object-cover shrink-0 rounded" loading="lazy">
                             <div class="min-w-0">
                                 <b class="text-[#F5F7E8] text-sm block truncate">${p.name}</b>
                                 <span class="text-[#8A8E75] text-xs whitespace-nowrap">
@@ -568,12 +563,12 @@
                                 <b class="text-[#F5F7E8] text-sm block truncate">${s.title || 'Без заголовка'}</b>
                                 <span class="text-[#8A8E75] text-xs block truncate">Кнопка: ${s.button_text || 'Нет'} -> ${s.button_link || 'catalog'}</span>
                             </div>
-                                                        <div>
+                            <div>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('slide', '${s.id}', this)">Удалить</button>
                             </div>
                         </div>
                     </div>
-                `).join('') : '<p class="text-[#8A8E75] text-sm">Нет слайдов</p>';
+                        `).join('') : '<p class="text-[#8A8E75] text-sm">Нет слайдов</p>';
 
                 const vids = vidsRes.data;
                 document.getElementById('vid-list').innerHTML = vids && vids.length ? vids.map(v => `
@@ -598,12 +593,12 @@
                             <div class="flex-1 min-w-0">
                                 <b class="text-[#F5F7E8] text-sm block">${l.name} - ${l.phone}</b>
                                 <span class="text-[10px] text-[#8A8E75] uppercase tracking-wide">${date}</span>
-                                                            </div>
+                            </div>
                             <div class="flex gap-2 shrink-0">
                                 <button type="button" style="${btnDetailsStyle}" onclick="toggleLeadDetails('${l.id}', this)">Подробнее</button>
                                 <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('lead', '${l.id}', this)">Удалить</button>
                             </div>
-                        </div>
+                                                    </div>
                         <div id="lead-details-${l.id}" class="hidden mt-3 bg-[#20231A] p-3 rounded text-xs text-[#F5F7E8] whitespace-pre-line">${l.details || 'Нет деталей'}</div>
                     </div>
                     `;
@@ -619,7 +614,7 @@
                     document.getElementById('ci-b2-text').value = ci.block2_text || '';
                     document.getElementById('ci-b3-title').value = ci.block3_title || '';
                     document.getElementById('ci-b3-text').value = ci.block3_text || '';
-                    document.getElementById('ci-calc-initial').value = ci.calc_initial || 20;
+                    document.getElementById('ci-calc-initial).value = ci.calc_initial || 20;
                     document.getElementById('ci-calc-rate').value = ci.calc_rate || 15;
                     document.getElementById('ci-calc-term').value = ci.calc_term || 36;
                 }
@@ -628,12 +623,12 @@
                 document.getElementById('promo-list').innerHTML = promos && promos.length ? promos.map(p => `
                     <div class="flex justify-between items-center bg-[#20231A] p-3 rounded-lg mb-2 gap-2">
                         <div class="min-w-0"><b class="text-[#F5F7E8] text-sm">${p.code}</b> <span class="text-[#8A8E75] text-xs">- ${p.discount_percent}${p.discount_type === 'fixed' ? ' ₽' : '%'}</span></div>
-                                                <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('promo', '${p.id}', this)">Удалить</button>
+                        <button type="button" style="${btnDeleteStyle}" onclick="confirmDelete('promo', '${p.id}', this)">Удалить</button>
                     </div>
                 `).join('') : '<p class="text-[#8A8E75] text-xs">Промокодов нет</p>';
 
                 const projects = projectsRes.data;
-                document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
+                                document.getElementById('pr-list').innerHTML = projects && projects.length ? projects.map(p => `
                     <div class="bg-[#20231A] p-4 rounded-lg flex gap-3 items-center">
                         <img src="${p.image_url ? p.image_url : 'https://via.placeholder.com/200'}?width=200&quality=50" class="w-20 h-20 object-cover rounded shrink-0" loading="lazy">
                         <div class="flex flex-col justify-between flex-1 min-w-0 gap-2">
@@ -648,7 +643,7 @@
                     </div>
                 `).join('') : '<p class="text-[#8A8E75] text-sm">Нет проектов</p>';
             } catch (err) {
-                showToast("Ошибка загрузки данных: " + (err.message || ""), true);
+                console.error("Load data error", err);
             }
         }
 
@@ -658,12 +653,12 @@
                 el.classList.toggle('hidden');
                 btn.innerText = el.classList.contains('hidden') ? 'Подробнее' : 'Свернуть';
             }
-                    }
+        }
 
         function editProduct(id) {
             sb.from('products').select('*').eq('id', id).single().then(({ data }) => {
                 showTab('products');
-                document.getElementById('p-id').value = data.id;
+                                document.getElementById('p-id').value = data.id;
                 document.getElementById('p-name').value = data.name;
                 
                 document.querySelectorAll('.cat-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -683,13 +678,17 @@
                 fillData('specs-container', data.specs, ['label','value']);
                 fillData('eng-container', data.engines, ['name','price','desc']);
                 fillData('opt-container', data.options, ['name','price','desc']);
-                document.getElementById('p-img').value = ''; 
-                document.getElementById('img-status').innerText = 'Фото сохранены. Выберите новые, чтобы заменить.';
+                
+                const pImg = document.getElementById('p-img');
+                pImg.value = ''; 
+                updateFileLabel(pImg, 'p-img-status');
+                document.getElementById('p-img-status').innerText = 'Фото сохранены. Выберите новые, чтобы заменить.';
+                
                 document.getElementById('form-title').innerText = 'Редактирование: ' + data.name;
                 window.scrollTo(0, 0);
             });
-                    }
-
+        }
+        
         function confirmDelete(type, id, btn) {
             pendingDelete = { type, id, btn };
             document.getElementById('confirm-modal').classList.remove('hidden');
@@ -718,8 +717,8 @@
                     const { data: prod } = await sb.from('products').select('gallery').eq('id', id).single();
                     if (prod && prod.gallery && prod.gallery.length > 0) {
                         const names = prod.gallery.map(u => u.split('/').pop());
-                                                try { await sb.storage.from('product-photos').remove(names); } catch(e) { console.error("Storage error", e); }
-                    }
+                        try { await sb.storage.from('product-photos').remove(names); } catch(e) { console.error("Storage error", e); }
+                                            }
                     const res = await sb.from('products').delete().eq('id', id);
                     delError = res.error;
                 } else if (type === 'slide') {
@@ -748,16 +747,14 @@
                     delError = res.error;
                 } else if (type === 'promo') {
                     const res = await sb.from('promocodes').delete().eq('id', id);
-                                        delError = res.error;
-                }
+                    delError = res.error;
+                                    }
 
                 if (delError) throw delError;
 
                 loadData(); 
-                showToast("Удалено!");
             } catch(e) { 
                 console.error("Delete error", e);
-                showToast("Ошибка удаления: " + e.message, true); 
                 if(btn) { btn.disabled = false; btn.innerText = 'Удалить'; }
             }
         }
@@ -777,12 +774,11 @@
                 const engines = getData('eng-container', ['name','price','desc']);
                 const options = getData('opt-container', ['name','price','desc']);
                 const files = document.getElementById('p-img').files;
-
-                            if(!name || !price) { 
-                    showToast("Заполните название и цену!"); 
+                
+                if(!name || !price) { 
                     btn.disabled = false; btn.innerText = 'Сохранить';
                     return;
-                }
+                        }
                 
                 let gallery = [];
                 if (id && files.length === 0) {
@@ -800,32 +796,28 @@
                             gallery.push(sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl);
                         } catch(err) {
                             console.error("File error", err);
-                            showToast(`Ошибка с фото ${i+1}: ` + err.message, true);
                         }
                     }
                 }
                 
                 const payload = { name, category, price: parseFloat(price), description: desc, specs, engines, options, gallery, in_stock: stock };
                 btn.innerText = "Сохранение в базу...";
-
-                            if (id) { 
+                
+                if (id) { 
                     const { error } = await sb.from('products').update(payload).eq('id', id);
                     if (error) throw error;
-                    showToast("Обновлено!"); 
                 } else { 
                     const { error } = await sb.from('products').insert([payload]);
-                    if (error) throw error;
-                    showToast("Добавлено!"); 
+                                        if (error) throw error;
                 }
                 
                 safeStorage.del('cache_products');
                 resetForm(); loadData();
             } catch (e) { 
-                showToast("Ошибка: " + e.message, true); 
+                console.error("Save error", e);
             } finally { 
                 btn.disabled = false; 
                 btn.innerText = 'Сохранить';
-                document.getElementById('img-status').innerText = '';
             }
         }
 
@@ -835,10 +827,10 @@
                 const title = document.getElementById('v-title').value;
                 const url = document.getElementById('v-url').value;
                 const file = document.getElementById('v-img').files[0];
-                if(!url) { showToast("Вставьте ссылку!"); return; }
+                if(!url) { return; }
                 let imgUrl = '';
                 if (file) {
-                                        const comp = await compressImage(file);
+                    const comp = await compressImage(file);
                     const fName = `vid_${Date.now()}.webp`;
                     await sb.storage.from('product-photos').upload(fName, comp);
                     imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
@@ -846,11 +838,12 @@
                 const { error } = await sb.from('videos').insert([{ title, url, img_url: imgUrl }]);
                 if (error) throw error;
                 safeStorage.del('cache_videos');
-                showToast("Видео добавлено!");
-                document.getElementById('v-title').value = ''; document.getElementById('v-url').value = ''; document.getElementById('v-img').value = '';
+                                document.getElementById('v-title').value = ''; document.getElementById('v-url').value = '';
+                const vImg = document.getElementById('v-img');
+                vImg.value = ''; updateFileLabel(vImg, 'v-img-status');
                 loadData();
             } catch (e) { 
-                showToast("Ошибка: " + e.message, true); 
+                console.error("Save video error", e);
             } finally { 
                 btn.disabled = false; btn.innerText = 'Загрузить Видео'; 
             }
@@ -864,19 +857,20 @@
                 const btnText = document.getElementById('s-btn').value;
                 const btnLink = document.getElementById('s-link').value;
                 const file = document.getElementById('s-img').files[0];
-                if(!file) { showToast("Выберите фото!"); return; }
+                if(!file) { return; }
                 const comp = await compressImage(file);
                 const fName = `slide_${Date.now()}.webp`;
                 await sb.storage.from('product-photos').upload(fName, comp);
-                                const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
+                const imgUrl = sb.storage.from('product-photos').getPublicUrl(fName).data.publicUrl;
                 const { error } = await sb.from('slides').insert([{ title, subtitle, button_text: btnText, button_link: btnLink, image_url: imgUrl }]);
                 if (error) throw error;
                 safeStorage.del('cache_slides');
-                showToast("Слайд добавлен!");
                 document.getElementById('s-title').value = ''; document.getElementById('s-subtitle').value = ''; document.getElementById('s-btn').value = '';
-                loadData();
+                const sImg = document.getElementById('s-img');
+                sImg.value = ''; updateFileLabel(sImg, 's-img-status');
+                                loadData();
             } catch (e) { 
-                showToast("Ошибка: " + e.message, true); 
+                console.error("Save slide error", e);
             } finally { 
                 btn.disabled = false; btn.innerText = 'Загрузить Слайд'; 
             }
@@ -888,7 +882,7 @@
                 const title = document.getElementById('pr-title').value;
                 const desc = document.getElementById('pr-desc').value;
                 const file = document.getElementById('pr-img').files[0];
-                if(!file || !title) { showToast("Заполните название и фото!"); return; }
+                if(!file || !title) { return; }
                 const comp = await compressImage(file);
                 const fName = `pr_${Date.now()}.webp`;
                 await sb.storage.from('product-photos').upload(fName, comp);
@@ -896,14 +890,15 @@
                 const { error } = await sb.from('projects').insert([{ title, description: desc, image_url: imgUrl }]);
                 if (error) throw error;
                 safeStorage.del('cache_projects');
-                showToast("Проект добавлен!");
-                document.getElementById('pr-title').value = ''; document.getElementById('pr-desc').value = ''; document.getElementById('pr-img').value = '';
-                                loadData();
+                document.getElementById('pr-title').value = ''; document.getElementById('pr-desc').value = '';
+                const prImg = document.getElementById('pr-img');
+                prImg.value = ''; updateFileLabel(prImg, 'pr-img-status');
+                loadData();
             } catch (e) { 
-                showToast("Ошибка: " + e.message, true); 
+                console.error("Save project error", e);
             } finally { 
                 btn.disabled = false; btn.innerText = 'Загрузить Проект'; 
-            }
+                        }
         }
 
         async function saveCompanyInfo(btn) {
@@ -926,31 +921,28 @@
                 const { error } = await sb.from('company_info').update(payload).eq('id', 1);
                 if (error) throw error;
                 safeStorage.del('cache_company');
-                showToast("Настройки сохранены!");
             } catch (e) { 
-                            console.error("Save settings error", e);
-                showToast("Ошибка: " + e.message, true); 
+                console.error("Save settings error", e);
             } finally { 
                 btn.disabled = false; 
                 btn.innerText = originalText;
             }
         }
-
+        
         async function addPromo(btn) {
             const code = document.getElementById('promo-code').value.trim().toUpperCase();
             const discount = parseInt(document.getElementById('promo-discount').value);
             const type = document.getElementById('promo-type').value;
-            if(!code || !discount) { showToast("Заполните код и значение"); return; }
+            if(!code || !discount) { return; }
             
             btn.disabled = true; btn.innerText = 'Добавление...';
             try {
                 const { error } = await sb.from('promocodes').insert([{ code, discount_percent: discount, discount_type: type, is_active: true }]);
                 if (error) throw error;
-                showToast("Промокод добавлен!");
                 document.getElementById('promo-code').value = ''; document.getElementById('promo-discount').value = '';
                 loadData();
             } catch (error) {
-                showToast("Ошибка: " + error.message, true);
+                console.error("Add promo error", error);
             } finally {
                 btn.disabled = false; btn.innerText = 'Добавить Промокод';
             }
@@ -958,7 +950,7 @@
 
         let pollTimer = null;
         function startPollingLeads() {
-                        if (pollTimer) clearInterval(pollTimer);
+            if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(checkNewLeads, 30000); 
         }
 
@@ -966,7 +958,7 @@
             if (!sb) return;
             try {
                 const { count, error } = await sb.from('leads').select('*', { count: 'exact', head: true });
-                if (error) throw error;
+                        if (error) throw error;
                 currentLeadsCount = count || 0;
                 updateLeadsBadge(currentLeadsCount);
             } catch(e) { console.error("Polling error", e); }
