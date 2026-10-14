@@ -11,15 +11,9 @@
         body { font-family: 'Inter', sans-serif; background: #121410; color: #e4e6d9; letter-spacing: -0.01em; }
         h1, h2, h3, .heading { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
         
-        /* ЖЕСТКАЯ ЗАЩИТА ОТ ВЫДЕЛЕНИЯ ТЕКСТА НА КНОПКАХ И ССЫЛКАХ */
         button, a, label, input[type="button"], input[type="submit"], .btn-accent, .btn-outline {
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-            -webkit-touch-callout: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-            cursor: pointer;
+            -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important;
+            -webkit-touch-callout: none !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer;
         }
         input, textarea { -webkit-user-select: text; user-select: text; }
         
@@ -242,7 +236,7 @@
             const c1 = document.getElementById('cart-count'), c2 = document.getElementById('cart-count-header');
             if(c1) c1.innerText = cart.length;
             if(c2) c2.innerText = cart.length;
-                        try { localStorage.setItem('offroad_cart', JSON.stringify(cart)); } catch(e) {}
+            try { localStorage.setItem('offroad_cart', JSON.stringify(cart)); } catch(e) {}
         }
         updateCartUI();
 
@@ -268,7 +262,7 @@
             document.querySelectorAll('.view').forEach(x => x.classList.add('hidden')); 
             document.getElementById(v).classList.remove('hidden'); 
             closeSidebar(); window.scrollTo(0,0); 
-                    if(v==='catalog') loadProducts(); 
+            if(v==='catalog') loadProducts(); 
             if(v==='cart') renderCart(); 
             if(v==='home' && !homeLoaded) { 
                 loadSlides(); loadVideos(); loadCompanyInfo(); loadProjects(); 
@@ -279,7 +273,7 @@
         function handleSlideLink(link) {
             if (!link || link === 'catalog' || link === 'home' || link === 'contacts' || link.startsWith('http') === false) navigateTo(link || 'catalog');
             else window.open(link, '_blank');
-        }
+                }
 
         async function loadSlides() {
             if(!sb) return;
@@ -298,7 +292,7 @@
                     ${s.subtitle ? `<p class="slide-text-2 text-xl md:text-2xl mb-8 max-w-xl text-[#C0C4B0] font-normal">${s.subtitle}</p>` : ''}
                     ${s.button_text ? `<button class="slide-text-3 btn-accent text-base px-8 py-3" onclick="handleSlideLink('${s.button_link || 'catalog'}')">${s.button_text}</button>` : ''}
                 </div>
-                            `).join('') + `
+            `).join('') + `
                 <div class="slider-arrow left-4" onclick="prevSlide()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e4e6d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </div>
@@ -312,7 +306,7 @@
 
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    const firstSlide = wrapper.querySelector('.slide');
+                            const firstSlide = wrapper.querySelector('.slide');
                     if (firstSlide) firstSlide.classList.add('is-active');
                 });
             });
@@ -328,7 +322,7 @@
         }
 
         function resetSlideTimer() {
-                        if(slideTimer) clearInterval(slideTimer);
+            if(slideTimer) clearInterval(slideTimer);
             slideTimer = setInterval(() => nextSlide(true), 8000);
         }
 
@@ -344,7 +338,7 @@
             if (slides.length <= 1) return;
             slideIndex = (slideIndex + 1) % slides.length;
             updateSlideUI();
-            if (!isAuto) resetSlideTimer();
+                        if (!isAuto) resetSlideTimer();
         }
 
         function prevSlide() {
@@ -358,7 +352,7 @@
         function goToSlide(index) {
             slideIndex = index;
             updateSlideUI();
-                        resetSlideTimer();
+            resetSlideTimer();
         }
 
         async function loadCompanyInfo() {
@@ -377,7 +371,7 @@
             `;
         }
 
-        async function loadProjects() {
+                async function loadProjects() {
             if(!sb) return;
             const data = await fetchWithCache('cache_projects', async () => {
                 const { data } = await sb.from('projects').select('*').order('created_at', { ascending: false });
@@ -388,7 +382,7 @@
             grid.innerHTML = data.slice(0, 6).map(p => `
                 <div class="card-dark">
                     <img src="${fmtImg(p.image_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
-                                        <div class="p-6"><h3 class="text-lg mb-2 text-[#F5F7E8] font-bold heading">${p.title}</h3><p class="text-sm text-[#8A8E75] line-clamp-2 font-light">${p.description || ''}</p></div>
+                    <div class="p-6"><h3 class="text-lg mb-2 text-[#F5F7E8] font-bold heading">${p.title}</h3><p class="text-sm text-[#8A8E75] line-clamp-2 font-light">${p.description || ''}</p></div>
                 </div>
             `).join('');
         }
@@ -411,14 +405,14 @@
                 return data;
             });
             const grid = document.getElementById('videos-grid');
-            if(!data || data.length === 0) { grid.innerHTML = '<p class="text-[#8A8E75]">Видео пока нет</p>'; return; }
+                if(!data || data.length === 0) { grid.innerHTML = '<p class="text-[#8A8E75]">Видео пока нет</p>'; return; }
             grid.innerHTML = data.map(v => `
                 <div class="relative cursor-pointer rounded-lg overflow-hidden group border border-[#2A2E22]" onclick="playVideo('${getEmbedUrl(v.url)}')">
                     <img src="${fmtImg(v.img_url, 600, 80)}" class="w-full h-56 object-cover" loading="lazy">
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/60 transition"><div class="play-btn"></div></div>
                 </div>
             `).join('');
-                    }
+        }
 
         function playVideo(url) { 
             const sep = url.includes('?') ? '&' : '?';
@@ -445,10 +439,10 @@
                     ? `<span class="absolute top-4 left-4 bg-[#B5432E] text-[#F5F7E8] text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">Под заказ</span>` 
                     : `<span class="absolute top-4 left-4 bg-[#5F7A2A] text-[#F5F7E8] text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wide">В наличии</span>`;
                 return `
-                <div class="card-dark relative" onclick="openDetails('${p.id}')">
+                                <div class="card-dark relative" onclick="openDetails('${p.id}')">
                     <div class="card-carousel">
                         ${gallery.map(url => `<img src="${fmtImg(url, 600, 80)}" loading="lazy">`).join('')}
-                                            </div>
+                    </div>
                     ${stockBadge}
                     <div class="p-6"><h3 class="text-lg mb-2 text-[#F5F7E8] font-bold heading">${p.name}</h3><span class="text-xl font-bold text-[#F5F7E8]">${p.price.toLocaleString('ru')} ₽</span></div>
                 </div>
@@ -478,8 +472,8 @@
         }
 
         function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
-                function handleTouchEnd(e) {
-            const touchEndX = e.changedTouches[0].screenX;
+        function handleTouchEnd(e) {
+                        const touchEndX = e.changedTouches[0].screenX;
             if (touchEndX < touchStartX - 50) changeImg(1); 
             if (touchEndX > touchStartX + 50) changeImg(-1); 
         }
@@ -508,13 +502,13 @@
                     ${opt.desc ? `<small class="text-sm text-[#8A8E75] block mt-1">${opt.desc}</small>` : ''}
                 </label>
             `).join('');
-                        
+            
             const galHtml = `
                 <div class="relative mb-4 bg-[#1A1D14] rounded-lg overflow-hidden" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
                     <img id="main-gallery-img" src="${fmtImg(gallery[0], 1000, 90)}" class="w-full h-[500px] object-cover">
                     ${gallery.length > 1 ? `
                     <button onclick="changeImg(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-[#F5F7E8] w-10 h-10 rounded flex items-center justify-center hover:bg-[#5F7A2A] hover:text-[#F5F7E8]" aria-label="Предыдущее фото">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </button>
                     <button onclick="changeImg(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-[#F5F7E8] w-10 h-10 rounded flex items-center justify-center hover:bg-[#5F7A2A] hover:text-[#F5F7E8]" aria-label="Следующее фото">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -538,7 +532,7 @@
             const stockHtml = currentProduct.in_stock === false 
                 ? `<span class="bg-[#B5432E] text-[#F5F7E8] text-xs font-bold px-3 py-1 rounded uppercase mr-2">Под заказ</span>` 
                 : `<span class="bg-[#5F7A2A] text-[#F5F7E8] text-xs font-bold px-3 py-1 rounded uppercase mr-2">В наличии</span>`;
-            
+
             const cartBtnHtml = currentProduct.in_stock === false ? `
                 <button class="btn-accent w-full mt-8 opacity-50 cursor-not-allowed" disabled>Нет в наличии</button>` : `
                 <button class="btn-accent w-full mt-8" onclick="addToCart(this)">Добавить в Корзину</button>`;
@@ -549,7 +543,7 @@
                     Назад к Каталогу
                 </button>
                 <div class="grid md:grid-cols-2 gap-12">
-                    <div>${galHtml}</div>
+                                    <div>${galHtml}</div>
                     <div>
                         <h2 class="text-3xl md:text-4xl mb-4 text-[#F5F7E8] font-bold tracking-tight flex items-center heading">${stockHtml} ${currentProduct.name}</h2>
                         <div class="text-3xl font-bold text-[#F5F7E8] mb-4" id="total-price">${currentProduct.price.toLocaleString('ru')} ₽</div>
@@ -568,7 +562,7 @@
             `;
             navigateTo('product-details'); setupConfigurator();
         }
-        
+
         function setupConfigurator() {
             document.querySelectorAll('#eng-group label').forEach(item => {
                 item.onclick = () => { 
@@ -584,7 +578,7 @@
             document.querySelectorAll('#opt-group label').forEach(item => { 
                 item.onclick = () => { 
                     if(item.classList.contains('selected-opt')) { item.classList.remove('selected-opt'); }
-                    else { item.classList.add('selected-opt'); }
+                                        else { item.classList.add('selected-opt'); }
                     updateTotalPrice(); 
                 }; 
             });
@@ -598,7 +592,7 @@
             document.getElementById('total-price').innerText = total.toLocaleString('ru') + ' ₽';
             updateLeaseCalc(total);
         }
-        
+
         function updateLeaseCalc(price) {
             if (!leaseSettings) return;
             const initial = price * (leaseSettings.calc_initial / 100);
@@ -619,7 +613,7 @@
             if(totalEl) total = parseInt(totalEl.innerText.replace(/\D/g, '')) || 0;
             
             cart.push({ name: currentProduct.name, price: total, details: `Двигатель: ${engName}. Допы: ${opts.join(', ') || 'Нет'}` });
-            updateCartUI();
+                        updateCartUI();
             navigateTo('cart');
         }
 
@@ -628,7 +622,7 @@
             if (!input || !sb) return;
             const code = input.value.trim();
             if (!code) return;
-                    
+            
             if(btn) { btn.disabled = true; btn.innerText = "..."; }
             try {
                 const { data } = await sb.from('promocodes').select('*').ilike('code', code).eq('is_active', true);
@@ -653,12 +647,12 @@
         async function renderCart() {
             const w = document.getElementById('cart-wrapper');
             if(cart.length === 0) { w.innerHTML = '<p class="text-xl text-[#8A8E75]">Корзина пуста</p>'; return; }
-            
-            if (appliedPromo && sb) {
+
+                    if (appliedPromo && sb) {
                 try {
                     const { data } = await sb.from('promocodes').select('*').ilike('code', appliedPromo.code).eq('is_active', true);
                     if (!data || data.length === 0) {
-                                                appliedPromo = null; 
+                        appliedPromo = null; 
                     } else {
                         appliedPromo = data[0];
                     }
@@ -688,8 +682,8 @@
                     discount = appliedPromo.discount_percent || 0;
                     discountText = `Скидка: -${discount.toLocaleString('ru')} ₽`;
                 } else {
-                                        discount = Math.round(total * ((appliedPromo.discount_percent || 0) / 100));
-                    discountText = `Скидка: -${discount.toLocaleString('ru')} ₽ (${appliedPromo.discount_percent}%)`;
+                    discount = Math.round(total * ((appliedPromo.discount_percent || 0) / 100));
+                                        discountText = `Скидка: -${discount.toLocaleString('ru')} ₽ (${appliedPromo.discount_percent}%)`;
                 }
                 total -= discount;
             }
@@ -718,14 +712,14 @@
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); renderCart(); }
 
-                function submitCartLead(btn) {
+        function submitCartLead(btn) {
             const nameEl = document.getElementById('cart-name');
             const phoneEl = document.getElementById('cart-phone');
             const commentEl = document.getElementById('cart-comment');
             if(!nameEl || !phoneEl) return;
             const name = nameEl.value.trim();
             const phone = phoneEl.value.trim();
-            if(!name || !phone) return;
+                        if(!name || !phone) return;
             
             if (!sb) { 
                 btn.innerText = "База не подключена"; 
@@ -742,13 +736,16 @@
             
             sb.from('leads').insert([{ name, phone, details }]).then(() => {
                 // УСПЕХ: Очищаем корзину и уходим на главную
-                cart = []; appliedPromo = null; updateCartUI(); navigateTo('home');
+                btn.innerText = "Заявка отправлена!";
+                setTimeout(() => {
+                    cart = []; appliedPromo = null; updateCartUI(); navigateTo('home');
+                }, 2000);
             }).catch(() => { 
                 // ОШИБКА СЕТИ: Корзину НЕ очищаем! Даем клиенту шанс нажать снова.
                 btn.disabled = false; 
                 btn.innerText = "Ошибка сети. Повторить?"; 
                 setTimeout(() => { if(!btn.disabled) btn.innerText = "Оформить Заявку"; }, 3000);
-                            });
+            });
         }
 
         function submitUnifiedLead(btn) {
@@ -758,7 +755,7 @@
             if(!nameEl || !phoneEl) return;
             const name = nameEl.value.trim();
             const phone = phoneEl.value.trim();
-            if(!name || !phone) return;
+                        if(!name || !phone) return;
             
             if (!sb) { 
                 btn.innerText = "База не подключена"; 
@@ -778,7 +775,7 @@
                 btn.innerText = "Заявка отправлена!";
                 setTimeout(() => { if(!btn.disabled) btn.innerText = "Отправить Заявку"; }, 3000);
             }).catch(() => { 
-                                     // ОШИБКА СЕТИ: Поля не чистим, меняем текст кнопки
+                // ОШИБКА СЕТИ: Поля не чистим, меняем текст кнопки
                 btn.disabled = false; 
                 btn.innerText = "Ошибка сети. Повторить?"; 
                 setTimeout(() => { if(!btn.disabled) btn.innerText = "Отправить Заявку"; }, 3000);
